@@ -19,7 +19,13 @@ pub fn render_boot(framebuffer: &mut Framebuffer, progress: f32) {
     draw_center(framebuffer, 28, "CONNEXION AU SERVICE", CYAN, 1);
     draw_center(framebuffer, 62, "3615", YELLOW, 2);
     draw_center(framebuffer, 84, "GCHO", CYAN, 2);
-    draw_center(framebuffer, 122, "INITIALISATION DU TERMINAL...", OFF_WHITE, 1);
+    draw_center(
+        framebuffer,
+        122,
+        "INITIALISATION DU TERMINAL...",
+        OFF_WHITE,
+        1,
+    );
 
     let width = 180_u32;
     let filled = (width as f32 * progress.clamp(0.0, 1.0)).round() as u32;
@@ -67,7 +73,12 @@ pub fn render_terminal(
             framebuffer.fill_rect(9, y - 3, 302, 12, CYAN);
         }
         let ink = if selected { BG } else { OFF_WHITE };
-        framebuffer.draw_text(14, y, &format!("{}  {}", entry.key, fit(entry.label, 43)), ink);
+        framebuffer.draw_text(
+            14,
+            y,
+            &format!("{}  {}", entry.key, fit(entry.label, 43)),
+            ink,
+        );
     }
 
     render_page_content(framebuffer, page, content);
@@ -132,7 +143,13 @@ fn render_editorial(framebuffer: &mut Framebuffer, y: i32, file: &ContentFile, a
 fn terminal_background(framebuffer: &mut Framebuffer) {
     framebuffer.clear(BG);
     for y in (2..framebuffer.height() as i32).step_by(4) {
-        framebuffer.draw_line(0, y, framebuffer.width() as i32 - 1, y, Pixel::rgb(3, 12, 15));
+        framebuffer.draw_line(
+            0,
+            y,
+            framebuffer.width() as i32 - 1,
+            y,
+            Pixel::rgb(3, 12, 15),
+        );
     }
 }
 

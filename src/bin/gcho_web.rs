@@ -1,7 +1,7 @@
 #[cfg(target_arch = "wasm32")]
-use gpe_3615_gcho::{GchoApp, engine_config};
-#[cfg(target_arch = "wasm32")]
 use gotoo_pixel_engine::run;
+#[cfg(target_arch = "wasm32")]
+use gpe_3615_gcho::{GchoApp, engine_config};
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 

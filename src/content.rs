@@ -49,12 +49,7 @@ impl ContentBundle {
         )
     }
 
-    pub fn from_sources(
-        service_public: &str,
-        news: &str,
-        messages: &str,
-        secrets: &str,
-    ) -> Self {
+    pub fn from_sources(service_public: &str, news: &str, messages: &str, secrets: &str) -> Self {
         Self {
             service_public: parse_or(service_public, fallback_service_public),
             news: parse_or(news, fallback_news),
