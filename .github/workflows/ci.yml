@@ -9,13 +9,28 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+
       - name: Install Rust 1.97.1
         run: |
-          rustup toolchain install 1.97.1 --profile minimal
+          rustup toolchain install 1.97.1 --profile minimal --component rustfmt --component clippy
           rustup default 1.97.1
+          rustup target add wasm32-unknown-unknown
+
+      - name: Validate editorial content
+        run: python3 tools/generate_content.py --check
+
+      - name: Format
+        run: cargo fmt --all --check
+
       - name: Test
         run: cargo test --all-targets
+
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Web compile gate
+        run: cargo build --release --target wasm32-unknown-unknown --bin gcho-web
