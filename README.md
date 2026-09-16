@@ -100,6 +100,14 @@ L'accueil integre le logo Minitel fourni dans le framebuffer GPE. L'image est em
 
 Apres `CONNEXION ETABLIE`, une courte phase de branding affiche le logo Minitel dans le framebuffer avant l'arrivee sur l'accueil. La sequence `Boot -> Branding -> Service` est entierement locale et deterministe ; `Entree` ou `Echap` permet de passer la phase courante. Aucun etat HTML ni systeme generique de splash/theme n'est introduit.
 
+## MFE-9.1 — layout et reconnexion
+
+Le prompt `VOTRE CHOIX ?` ne chevauche plus la barre d'etat et disparait de l'accueil, ou il etait redondant. `AIDE -> 2 REVOIR CONNEXION` rejoue la sequence complete `Boot -> Branding -> Service`, son de boot compris, en revenant sur un etat d'accueil propre.
+
+## MFE-10 — rencontres et contenu GCHO
+
+`MESSAGERIE -> RENCONTRES` est un vrai sous-ecran editorial, alimente par `content/rencontres.json`. Il parodie les anciens services de rencontres telematiques avec profils adultes fictifs, facturation affichee `5 FRANCS / MINUTE` et humour non explicite. Une premiere passe de contenu loufoque enrichit aussi les notices d'`ARCADE`, `MESSAGERIE`, `INFOS`, `GPE` et `NOEUD 7` sans ajouter de framework de contenu.
+
 ## Lancer en natif
 
 ```bash
@@ -145,6 +153,7 @@ Snapshots :
 - `content/news.json`
 - `content/messages.json`
 - `content/secrets.json`
+- `content/rencontres.json`
 
 `tools/generate_content.py` regenere `service_public.json` a partir de templates locaux approuves. La selection est deterministe pour une date UTC donnee :
 
