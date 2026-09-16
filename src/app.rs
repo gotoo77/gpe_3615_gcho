@@ -2,8 +2,9 @@ use gotoo_pixel_engine::{Audio, Frame, Game, GameResult, Key, MouseButton, TextI
 
 use crate::content::ContentBundle;
 use crate::experience::{
-    DATA_CHUNK_CHARACTERS, TERMINAL_VISIBLE_CHARACTERS, LiveServicePulse, TerminalTiming,
-    data_chunks_crossed, render_live_status, render_public_service_banner, render_transmission_mask,
+    DATA_CHUNK_CHARACTERS, LiveServicePulse, TERMINAL_VISIBLE_CHARACTERS, TerminalTiming,
+    data_chunks_crossed, render_live_status, render_public_service_banner,
+    render_transmission_mask,
 };
 use crate::facade::{FunctionKey, function_key_at};
 use crate::render::{render_boot, render_terminal};
