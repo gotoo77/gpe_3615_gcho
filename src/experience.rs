@@ -175,20 +175,8 @@ pub(crate) fn render_live_status(
     status: &str,
     selection: Option<u8>,
 ) {
-    framebuffer.fill_rect(
-        9,
-        LIVE_STATUS_TOP_Y,
-        302,
-        10,
-        Pixel::rgb(5, 16, 20),
-    );
-    framebuffer.draw_line(
-        9,
-        LIVE_STATUS_TOP_Y,
-        310,
-        LIVE_STATUS_TOP_Y,
-        TERMINAL_DIM,
-    );
+    framebuffer.fill_rect(9, LIVE_STATUS_TOP_Y, 302, 10, Pixel::rgb(5, 16, 20));
+    framebuffer.draw_line(9, LIVE_STATUS_TOP_Y, 310, LIVE_STATUS_TOP_Y, TERMINAL_DIM);
     let label = if selection.is_some() {
         selection_hint(selection)
     } else {
