@@ -44,53 +44,181 @@ pub struct Entry {
 }
 
 const ACCUEIL: &[Entry] = &[
-    Entry { key: 1, label: "ARCADE       JEUX ET DEMOS", target: Target::Page(PageId::Arcade) },
-    Entry { key: 2, label: "MESSAGERIE   DIALOGUER, RENCONTRER", target: Target::Page(PageId::Messagerie) },
-    Entry { key: 3, label: "INFOS        ACTUALITES ET COMMUNIQUES", target: Target::Page(PageId::Infos) },
-    Entry { key: 4, label: "GPE          PROJETS ET LABORATOIRE", target: Target::Page(PageId::Gpe) },
-    Entry { key: 5, label: "SECRETS      ACCES RESTREINT", target: Target::Page(PageId::Noeud7) },
-    Entry { key: 6, label: "AIDE", target: Target::Page(PageId::Aide) },
-    Entry { key: 0, label: "QUITTER", target: Target::Quit },
+    Entry {
+        key: 1,
+        label: "ARCADE       JEUX ET DEMOS",
+        target: Target::Page(PageId::Arcade),
+    },
+    Entry {
+        key: 2,
+        label: "MESSAGERIE   DIALOGUER, RENCONTRER",
+        target: Target::Page(PageId::Messagerie),
+    },
+    Entry {
+        key: 3,
+        label: "INFOS        ACTUALITES ET COMMUNIQUES",
+        target: Target::Page(PageId::Infos),
+    },
+    Entry {
+        key: 4,
+        label: "GPE          PROJETS ET LABORATOIRE",
+        target: Target::Page(PageId::Gpe),
+    },
+    Entry {
+        key: 5,
+        label: "SECRETS      ACCES RESTREINT",
+        target: Target::Page(PageId::Noeud7),
+    },
+    Entry {
+        key: 6,
+        label: "AIDE",
+        target: Target::Page(PageId::Aide),
+    },
+    Entry {
+        key: 0,
+        label: "QUITTER",
+        target: Target::Quit,
+    },
 ];
 
 const ARCADE: &[Entry] = &[
-    Entry { key: 1, label: "CLASSEMENT GCHO", target: Target::Detail(DetailId::ArcadeScores) },
-    Entry { key: 2, label: "PIXEL MAZE", target: Target::Notice("LABYRINTHE EN MAINTENANCE DEPUIS 1987.") },
-    Entry { key: 3, label: "LE PENDU", target: Target::Notice("LE MOT ETAIT: MODEM. VOUS AVEZ PERDU.") },
-    Entry { key: 4, label: "DEMONSTRATIONS", target: Target::Notice("DEMO GRAPHIQUE: 40 COLONNES. IMPRESSIONNANT.") },
-    Entry { key: 5, label: "TELECHARGEMENTS", target: Target::Notice("DEBIT ESTIME: 1200 BAUD. BON COURAGE.") },
+    Entry {
+        key: 1,
+        label: "CLASSEMENT GCHO",
+        target: Target::Detail(DetailId::ArcadeScores),
+    },
+    Entry {
+        key: 2,
+        label: "PIXEL MAZE",
+        target: Target::Notice("LABYRINTHE EN MAINTENANCE DEPUIS 1987."),
+    },
+    Entry {
+        key: 3,
+        label: "LE PENDU",
+        target: Target::Notice("LE MOT ETAIT: MODEM. VOUS AVEZ PERDU."),
+    },
+    Entry {
+        key: 4,
+        label: "DEMONSTRATIONS",
+        target: Target::Notice("DEMO GRAPHIQUE: 40 COLONNES. IMPRESSIONNANT."),
+    },
+    Entry {
+        key: 5,
+        label: "TELECHARGEMENTS",
+        target: Target::Notice("DEBIT ESTIME: 1200 BAUD. BON COURAGE."),
+    },
 ];
 
 const MESSAGERIE: &[Entry] = &[
-    Entry { key: 1, label: "MA BOITE", target: Target::Detail(DetailId::Mailbox) },
-    Entry { key: 2, label: "SALONS", target: Target::Notice("SALON #GENERAL: 3 CONNECTES, 11 FANTOMES.") },
-    Entry { key: 3, label: "RENCONTRES", target: Target::Notice("COMPATIBILITE TELEMATIQUE: INDETERMINEE.") },
-    Entry { key: 4, label: "PETITES ANNONCES", target: Target::Notice("VENDS MODEM PEU SERVI. CAUSE: INTERNET.") },
-    Entry { key: 5, label: "CARNET D'ADRESSES", target: Target::Notice("3615 GCHO EST DEJA DANS VOS FAVORIS.") },
+    Entry {
+        key: 1,
+        label: "MA BOITE",
+        target: Target::Detail(DetailId::Mailbox),
+    },
+    Entry {
+        key: 2,
+        label: "SALONS",
+        target: Target::Notice("SALON #GENERAL: 3 CONNECTES, 11 FANTOMES."),
+    },
+    Entry {
+        key: 3,
+        label: "RENCONTRES",
+        target: Target::Notice("COMPATIBILITE TELEMATIQUE: INDETERMINEE."),
+    },
+    Entry {
+        key: 4,
+        label: "PETITES ANNONCES",
+        target: Target::Notice("VENDS MODEM PEU SERVI. CAUSE: INTERNET."),
+    },
+    Entry {
+        key: 5,
+        label: "CARNET D'ADRESSES",
+        target: Target::Notice("3615 GCHO EST DEJA DANS VOS FAVORIS."),
+    },
 ];
 
 const INFOS: &[Entry] = &[
-    Entry { key: 1, label: "BREVES", target: Target::Notice("LA JOURNEE CONTINUE. D'AUTRES INFORMATIONS SUIVRONT.") },
-    Entry { key: 2, label: "SERVICE PUBLIC", target: Target::Detail(DetailId::ServicePublic) },
-    Entry { key: 3, label: "ALERTES", target: Target::Notice("NIVEAU D'ALERTE: ADMINISTRATIVEMENT VIGILANT.") },
-    Entry { key: 4, label: "CONSEILS PRATIQUES", target: Target::Notice("CONSEIL: LISEZ LES CONSEILS AVANT DE LES SUIVRE.") },
-    Entry { key: 5, label: "COMMUNIQUES", target: Target::Notice("AUCUN COMMUNIQUE NE NECESSITE DE COMMUNIQUER.") },
-    Entry { key: 6, label: "RECTIFICATIFS", target: Target::Notice("LE RECTIFICATIF PRECEDENT EST RECTIFIE.") },
+    Entry {
+        key: 1,
+        label: "BREVES",
+        target: Target::Notice("LA JOURNEE CONTINUE. D'AUTRES INFORMATIONS SUIVRONT."),
+    },
+    Entry {
+        key: 2,
+        label: "SERVICE PUBLIC",
+        target: Target::Detail(DetailId::ServicePublic),
+    },
+    Entry {
+        key: 3,
+        label: "ALERTES",
+        target: Target::Notice("NIVEAU D'ALERTE: ADMINISTRATIVEMENT VIGILANT."),
+    },
+    Entry {
+        key: 4,
+        label: "CONSEILS PRATIQUES",
+        target: Target::Notice("CONSEIL: LISEZ LES CONSEILS AVANT DE LES SUIVRE."),
+    },
+    Entry {
+        key: 5,
+        label: "COMMUNIQUES",
+        target: Target::Notice("AUCUN COMMUNIQUE NE NECESSITE DE COMMUNIQUER."),
+    },
+    Entry {
+        key: 6,
+        label: "RECTIFICATIFS",
+        target: Target::Notice("LE RECTIFICATIF PRECEDENT EST RECTIFIE."),
+    },
 ];
 
 const GPE: &[Entry] = &[
-    Entry { key: 1, label: "MOTEUR PIXEL", target: Target::Notice("GPE: PETIT MOTEUR, GRAND ECRAN CATHODIQUE MENTAL.") },
-    Entry { key: 2, label: "LABORATOIRE", target: Target::Notice("EXPERIENCE EN COURS. NE TOUCHEZ PAS AU FRAMEBUFFER.") },
-    Entry { key: 3, label: "PROJETS EN LIGNE", target: Target::Detail(DetailId::GpeProjects) },
+    Entry {
+        key: 1,
+        label: "MOTEUR PIXEL",
+        target: Target::Notice("GPE: PETIT MOTEUR, GRAND ECRAN CATHODIQUE MENTAL."),
+    },
+    Entry {
+        key: 2,
+        label: "LABORATOIRE",
+        target: Target::Notice("EXPERIENCE EN COURS. NE TOUCHEZ PAS AU FRAMEBUFFER."),
+    },
+    Entry {
+        key: 3,
+        label: "PROJETS EN LIGNE",
+        target: Target::Detail(DetailId::GpeProjects),
+    },
 ];
 
 const NOEUD7: &[Entry] = &[
-    Entry { key: 1, label: "LE FICHIER", target: Target::Detail(DetailId::Node7File) },
-    Entry { key: 2, label: "LES TEMOINS", target: Target::Notice("LES TEMOINS N'ONT RIEN VU. ILS CONFIRMENT TOUS.") },
-    Entry { key: 3, label: "CARTES", target: Target::Notice("AUCUNE CARTE NE MONTRE CET ENDROIT.") },
-    Entry { key: 4, label: "EXPERIENCES", target: Target::Notice("EXPERIENCE 3615: SUJET TOUJOURS CONNECTE.") },
-    Entry { key: 5, label: "CONTACT", target: Target::Notice("LE CONTACT VOUS A DEJA CONTACTE.") },
-    Entry { key: 6, label: "REVENIR", target: Target::Summary },
+    Entry {
+        key: 1,
+        label: "LE FICHIER",
+        target: Target::Detail(DetailId::Node7File),
+    },
+    Entry {
+        key: 2,
+        label: "LES TEMOINS",
+        target: Target::Notice("LES TEMOINS N'ONT RIEN VU. ILS CONFIRMENT TOUS."),
+    },
+    Entry {
+        key: 3,
+        label: "CARTES",
+        target: Target::Notice("AUCUNE CARTE NE MONTRE CET ENDROIT."),
+    },
+    Entry {
+        key: 4,
+        label: "EXPERIENCES",
+        target: Target::Notice("EXPERIENCE 3615: SUJET TOUJOURS CONNECTE."),
+    },
+    Entry {
+        key: 5,
+        label: "CONTACT",
+        target: Target::Notice("LE CONTACT VOUS A DEJA CONTACTE."),
+    },
+    Entry {
+        key: 6,
+        label: "REVENIR",
+        target: Target::Summary,
+    },
 ];
 
 const AIDE: &[Entry] = &[Entry {
@@ -110,7 +238,9 @@ pub struct Service {
 }
 
 impl Default for Service {
-    fn default() -> Self { Self::new() }
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Service {
@@ -125,13 +255,32 @@ impl Service {
         }
     }
 
-    pub fn current_page(&self) -> PageId { self.current }
-    pub fn current_detail(&self) -> Option<DetailId> { self.detail }
-    pub fn pending_digit(&self) -> Option<u8> { self.pending }
-    pub fn notice(&self) -> Option<&'static str> { self.notice }
+    pub fn current_page(&self) -> PageId {
+        self.current
+    }
+
+    pub fn current_detail(&self) -> Option<DetailId> {
+        self.detail
+    }
+
+    pub fn pending_digit(&self) -> Option<u8> {
+        self.pending
+    }
+
+    pub fn notice(&self) -> Option<&'static str> {
+        self.notice
+    }
 
     pub fn available_pages() -> &'static [PageId] {
-        &[PageId::Accueil, PageId::Arcade, PageId::Messagerie, PageId::Infos, PageId::Gpe, PageId::Noeud7, PageId::Aide]
+        &[
+            PageId::Accueil,
+            PageId::Arcade,
+            PageId::Messagerie,
+            PageId::Infos,
+            PageId::Gpe,
+            PageId::Noeud7,
+            PageId::Aide,
+        ]
     }
 
     pub fn entries(&self) -> &'static [Entry] {
@@ -146,7 +295,9 @@ impl Service {
         }
     }
 
-    pub fn take_exit_requested(&mut self) -> bool { std::mem::take(&mut self.exit_requested) }
+    pub fn take_exit_requested(&mut self) -> bool {
+        std::mem::take(&mut self.exit_requested)
+    }
 
     pub fn apply(&mut self, command: NavCommand) {
         match command {
@@ -157,7 +308,11 @@ impl Service {
                     self.notice = Some("UTILISEZ RETOUR POUR QUITTER CET ECRAN.");
                     return;
                 }
-                self.pending = self.entries().iter().any(|entry| entry.key == digit).then_some(digit);
+                self.pending = self
+                    .entries()
+                    .iter()
+                    .any(|entry| entry.key == digit)
+                    .then_some(digit);
                 if self.pending.is_none() {
                     self.notice = Some("CHOIX INVALIDE. LE TERMINAL VOUS JUGE SILENCIEUSEMENT.");
                 }
@@ -171,7 +326,12 @@ impl Service {
                     self.notice = Some("SAISISSEZ UN NUMERO AVANT ENVOI.");
                     return;
                 };
-                let Some(target) = self.entries().iter().find(|entry| entry.key == digit).map(|entry| entry.target) else {
+                let Some(target) = self
+                    .entries()
+                    .iter()
+                    .find(|entry| entry.key == digit)
+                    .map(|entry| entry.target)
+                else {
                     self.notice = Some("CHOIX INVALIDE.");
                     return;
                 };
