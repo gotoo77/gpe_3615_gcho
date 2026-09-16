@@ -8,11 +8,7 @@ fn activate(service: &mut Service, digit: u8) {
 #[test]
 fn accueil_is_the_new_royal_service_home() {
     let service = Service::new();
-    let labels: Vec<_> = service
-        .entries()
-        .iter()
-        .map(|entry| entry.label)
-        .collect();
+    let labels: Vec<_> = service.entries().iter().map(|entry| entry.label).collect();
 
     assert_eq!(service.current_page(), PageId::Accueil);
     assert_eq!(
@@ -33,17 +29,11 @@ fn royal_primary_entries_open_real_detail_screens() {
     let mut service = Service::new();
 
     activate(&mut service, 1);
-    assert_eq!(
-        service.current_detail(),
-        Some(DetailId::RoyalCommunique)
-    );
+    assert_eq!(service.current_detail(), Some(DetailId::RoyalCommunique));
 
     service.apply(NavCommand::Summary);
     activate(&mut service, 2);
-    assert_eq!(
-        service.current_detail(),
-        Some(DetailId::RoyalHeatAlert)
-    );
+    assert_eq!(service.current_detail(), Some(DetailId::RoyalHeatAlert));
 }
 
 #[test]
