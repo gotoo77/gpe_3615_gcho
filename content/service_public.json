@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-09-15T00:00:00Z",
+  "messages": [
+    {
+      "id": "sp-20260915-01",
+      "category": "service_public",
+      "title": "MESSAGE DU SERVICE PUBLIC",
+      "body": ["VOUS AVEZ CHAUD ?", "PENSEZ A BOIRE DE L'EAU.", "MERCI DE VOTRE ATTENTION."]
+    },
+    {
+      "id": "sp-20260915-02",
+      "category": "alerte",
+      "title": "ALERTE NATIONALE",
+      "body": ["EN CAS DE PLUIE,", "VOUS RISQUEZ D'ETRE MOUILLE.", "PREVOYEZ UN VETEMENT ADAPTE."]
+    },
+    {
+      "id": "sp-20260915-03",
+      "category": "conseil",
+      "title": "CONSEIL DU JOUR",
+      "body": ["VOUS ETES FATIGUE ?", "LE SERVICE PUBLIC VOUS RECOMMANDE DE DORMIR."]
+    }
+  ]
+}

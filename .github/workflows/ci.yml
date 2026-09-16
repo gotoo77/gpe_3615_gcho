@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main, feat/mfe-0]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libudev-dev pkg-config
+
+      - name: Install Rust 1.97.1
+        run: |
+          rustup toolchain install 1.97.1 --profile minimal --component rustfmt --component clippy
+          rustup default 1.97.1
+          rustup target add wasm32-unknown-unknown
+
+      - name: Validate committed editorial content
+        run: python3 tools/generate_content.py --check
+
+      - name: Exercise deterministic content generation
+        run: |
+          python3 tools/generate_content.py --date 2026-09-15
+          cp content/service_public.json /tmp/service_public.first.json
+          python3 tools/generate_content.py --date 2026-09-15
+          cmp /tmp/service_public.first.json content/service_public.json
+          python3 tools/generate_content.py --check
+
+      - name: Format
+        run: cargo fmt --all --check
+
+      - name: Test
+        run: cargo test --all-targets
+
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Web compile gate
+        run: cargo build --release --target wasm32-unknown-unknown --bin gcho-web
+
+      - name: Install wasm-bindgen CLI
+        run: cargo install wasm-bindgen-cli --version 0.2.127 --locked
+
+      - name: Package Web artifact
+        run: |
+          mkdir -p dist/pkg dist/content
+          wasm-bindgen \
+            --target web \
+            --out-name gcho-web \
+            --out-dir dist/pkg \
+            target/wasm32-unknown-unknown/release/gcho-web.wasm
+          cp web/index.html dist/index.html
+          cp content/*.json dist/content/
+          test -f dist/index.html
+          test -f dist/pkg/gcho-web.js
+          test -f dist/pkg/gcho-web_bg.wasm
+          grep -Fq './pkg/gcho-web.js' dist/index.html

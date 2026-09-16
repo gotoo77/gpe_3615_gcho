@@ -1,0 +1,180 @@
+use gotoo_pixel_engine::{Framebuffer, Pixel};
+
+use crate::content::{ContentBundle, ContentFile};
+use crate::service::{PageId, Service};
+
+const BG: Pixel = Pixel::rgb(2, 7, 10);
+const DIM: Pixel = Pixel::rgb(20, 48, 55);
+const OFF_WHITE: Pixel = Pixel::rgb(225, 232, 218);
+const CYAN: Pixel = Pixel::rgb(50, 220, 225);
+const BLUE: Pixel = Pixel::rgb(80, 130, 255);
+const GREEN: Pixel = Pixel::rgb(80, 230, 120);
+const RED: Pixel = Pixel::rgb(245, 85, 75);
+const YELLOW: Pixel = Pixel::rgb(245, 215, 70);
+
+pub fn render_boot(framebuffer: &mut Framebuffer, progress: f32) {
+    terminal_background(framebuffer);
+    frame(framebuffer);
+
+    draw_center(framebuffer, 28, "CONNEXION AU SERVICE", CYAN, 1);
+    draw_center(framebuffer, 62, "3615", YELLOW, 2);
+    draw_center(framebuffer, 84, "GCHO", CYAN, 2);
+    draw_center(
+        framebuffer,
+        122,
+        "INITIALISATION DU TERMINAL...",
+        OFF_WHITE,
+        1,
+    );
+
+    let width = 180_u32;
+    let filled = (width as f32 * progress.clamp(0.0, 1.0)).round() as u32;
+    framebuffer.draw_rect(70, 143, width, 10, BLUE);
+    if filled > 2 {
+        framebuffer.fill_rect(72, 145, filled.saturating_sub(2).min(width - 4), 6, GREEN);
+    }
+
+    let status = if progress < 0.30 {
+        "NUMEROTATION : 3615"
+    } else if progress < 0.72 {
+        "NEGOCIATION DU PROTOCOLE..."
+    } else {
+        "CONNEXION ETABLIE"
+    };
+    draw_center(framebuffer, 171, status, OFF_WHITE, 1);
+    draw_center(framebuffer, 202, "VEUILLEZ PATIENTER", DIM, 1);
+}
+
+pub fn render_terminal(
+    framebuffer: &mut Framebuffer,
+    service: &Service,
+    content: &ContentBundle,
+    cursor_visible: bool,
+) {
+    terminal_background(framebuffer);
+    frame(framebuffer);
+
+    let page = service.current_page();
+    let (page_number, title) = page_identity(page);
+    framebuffer.draw_text(10, 9, "3615 GCHO", CYAN);
+    framebuffer.draw_text(258, 9, page_number, DIM);
+    framebuffer.draw_line(8, 20, 311, 20, BLUE);
+
+    draw_center(framebuffer, 29, title, YELLOW, 1);
+    if page == PageId::Accueil {
+        draw_center(framebuffer, 41, "L'ESPRIT EST EN RESEAU", GREEN, 1);
+    }
+
+    let start_y = if page == PageId::Accueil { 61 } else { 52 };
+    for (index, entry) in service.entries().iter().enumerate() {
+        let y = start_y + index as i32 * 15;
+        let selected = service.pending_digit() == Some(entry.key);
+        if selected {
+            framebuffer.fill_rect(9, y - 3, 302, 12, CYAN);
+        }
+        let ink = if selected { BG } else { OFF_WHITE };
+        framebuffer.draw_text(
+            14,
+            y,
+            &format!("{}  {}", entry.key, fit(entry.label, 43)),
+            ink,
+        );
+    }
+
+    render_page_content(framebuffer, page, content);
+
+    if let Some(notice) = service.notice() {
+        framebuffer.fill_rect(9, 184, 302, 26, Pixel::rgb(8, 24, 28));
+        framebuffer.draw_rect(9, 184, 302, 26, RED);
+        framebuffer.draw_text(14, 190, &fit(notice, 46), YELLOW);
+        if notice.chars().count() > 46 {
+            let rest: String = notice.chars().skip(46).collect();
+            framebuffer.draw_text(14, 200, &fit(rest.trim_start(), 46), YELLOW);
+        }
+    }
+
+    framebuffer.draw_line(8, 216, 311, 216, BLUE);
+    framebuffer.draw_text(11, 221, "SOMMAIRE  RETOUR  GUIDE             ENVOI", DIM);
+    framebuffer.draw_text(11, 231, "VOTRE CHOIX ?", OFF_WHITE);
+    if let Some(digit) = service.pending_digit() {
+        framebuffer.draw_text(96, 231, &digit.to_string(), CYAN);
+    }
+    if cursor_visible {
+        framebuffer.fill_rect(104, 230, 5, 8, CYAN);
+    }
+}
+
+fn render_page_content(framebuffer: &mut Framebuffer, page: PageId, content: &ContentBundle) {
+    match page {
+        PageId::Infos => render_editorial(framebuffer, 146, &content.service_public, CYAN),
+        PageId::Messagerie => render_editorial(framebuffer, 143, &content.messages, GREEN),
+        PageId::Noeud7 => render_editorial(framebuffer, 146, &content.secrets, RED),
+        PageId::Aide => {
+            framebuffer.draw_text(14, 88, "0-9       CHOIX", OFF_WHITE);
+            framebuffer.draw_text(14, 101, "ENTREE     ENVOI", OFF_WHITE);
+            framebuffer.draw_text(14, 114, "RETOUR ARR CORRECTION", OFF_WHITE);
+            framebuffer.draw_text(14, 127, "ECHAP      RETOUR", OFF_WHITE);
+            framebuffer.draw_text(14, 140, "DEBUT/HOME SOMMAIRE", OFF_WHITE);
+        }
+        PageId::Gpe => {
+            framebuffer.draw_text(14, 114, "RUNTIME: GPE / RUST / WEBGPU", GREEN);
+            framebuffer.draw_text(14, 127, "ETAT: L'ILLUSION FONCTIONNE", CYAN);
+        }
+        PageId::Arcade => {
+            framebuffer.draw_text(14, 146, "CREDITS: 00", GREEN);
+            framebuffer.draw_text(14, 159, "HAUT SCORE: ADMIN", YELLOW);
+        }
+        PageId::Accueil => {
+            framebuffer.draw_text(14, 172, "RESEAU GCHO: OUVERT", GREEN);
+        }
+    }
+}
+
+fn render_editorial(framebuffer: &mut Framebuffer, y: i32, file: &ContentFile, accent: Pixel) {
+    let Some(message) = file.messages.first() else {
+        return;
+    };
+    framebuffer.draw_text(14, y, &fit(&message.title, 46), accent);
+    for (index, line) in message.body.iter().take(2).enumerate() {
+        framebuffer.draw_text(14, y + 12 + index as i32 * 10, &fit(line, 46), OFF_WHITE);
+    }
+}
+
+fn terminal_background(framebuffer: &mut Framebuffer) {
+    framebuffer.clear(BG);
+    for y in (2..framebuffer.height() as i32).step_by(4) {
+        framebuffer.draw_line(
+            0,
+            y,
+            framebuffer.width() as i32 - 1,
+            y,
+            Pixel::rgb(3, 12, 15),
+        );
+    }
+}
+
+fn frame(framebuffer: &mut Framebuffer) {
+    framebuffer.draw_rect(4, 4, framebuffer.width() - 8, framebuffer.height() - 8, DIM);
+}
+
+fn draw_center(framebuffer: &mut Framebuffer, y: i32, text: &str, color: Pixel, scale: u32) {
+    let (width, _) = Framebuffer::text_size(text, scale);
+    let x = ((framebuffer.width().saturating_sub(width)) / 2) as i32;
+    framebuffer.draw_text_scaled(x, y, text, scale, color);
+}
+
+fn fit(text: impl AsRef<str>, max_chars: usize) -> String {
+    text.as_ref().chars().take(max_chars).collect()
+}
+
+fn page_identity(page: PageId) -> (&'static str, &'static str) {
+    match page {
+        PageId::Accueil => ("01/07", "3615 GCHO"),
+        PageId::Arcade => ("02/07", "ARCADE"),
+        PageId::Messagerie => ("03/07", "MESSAGERIE"),
+        PageId::Infos => ("04/07", "INFOS"),
+        PageId::Gpe => ("05/07", "GPE"),
+        PageId::Noeud7 => ("06/07", "NOEUD 7"),
+        PageId::Aide => ("07/07", "AIDE"),
+    }
+}

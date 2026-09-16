@@ -1,0 +1,8 @@
+[
+  {"category":"service_public","title":"MESSAGE DU SERVICE PUBLIC","body":["VOUS AVEZ CHAUD ?","PENSEZ A BOIRE DE L'EAU.","MERCI DE VOTRE ATTENTION."]},
+  {"category":"alerte","title":"ALERTE NATIONALE","body":["EN CAS DE PLUIE,","VOUS RISQUEZ D'ETRE MOUILLE.","PREVOYEZ UN VETEMENT ADAPTE."]},
+  {"category":"conseil","title":"CONSEIL DU JOUR","body":["VOUS ETES FATIGUE ?","LE SERVICE PUBLIC VOUS RECOMMANDE DE DORMIR."]},
+  {"category":"vigilance","title":"VIGILANCE NOCTURNE","body":["IL FAIT NUIT ?","LA LUMINOSITE EST SUSCEPTIBLE D'ETRE REDUITE."]},
+  {"category":"mobilite","title":"CONSEIL DE DEPLACEMENT","body":["VOUS ETES EN RETARD ?","PARTIR PLUS TOT AURAIT PU ETRE UTILE."]},
+  {"category":"administration","title":"RAPPEL ADMINISTRATIF","body":["CONSERVEZ CE MESSAGE.","IL POURRA VOUS ETRE DEMANDE DE LE CONSERVER."]}
+]
