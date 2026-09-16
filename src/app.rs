@@ -1,9 +1,7 @@
 use gotoo_pixel_engine::{Audio, Frame, Game, GameResult, Key, MouseButton, TextInputEvent};
 
 use crate::content::ContentBundle;
-use crate::experience::{
-    TerminalTiming, render_public_service_banner, render_transmission_mask,
-};
+use crate::experience::{TerminalTiming, render_public_service_banner, render_transmission_mask};
 use crate::facade::{FunctionKey, function_key_at};
 use crate::render::{render_boot, render_terminal};
 use crate::service::{NavCommand, PageId, Service};
