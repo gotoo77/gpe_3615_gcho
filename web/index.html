@@ -21,9 +21,10 @@
       }
       canvas {
         display: block;
-        width: min(100vw, calc(100vh * 4 / 3), 960px);
-        width: min(100vw, calc(100dvh * 4 / 3), 960px);
-        height: auto;
+        width: min(100vw, calc(100vh * 4 / 3), 960px) !important;
+        width: min(100vw, calc(100dvh * 4 / 3), 960px) !important;
+        height: min(100vh, calc(100vw * 3 / 4), 720px) !important;
+        height: min(100dvh, calc(100vw * 3 / 4), 720px) !important;
         aspect-ratio: 4 / 3;
         image-rendering: pixelated;
         touch-action: none;
