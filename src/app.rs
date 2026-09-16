@@ -103,10 +103,9 @@ impl Game for GchoApp {
                         commands.push((NavCommand::Digit(digit as u8), None));
                     }
                 }
-                TextInputEvent::Backspace | TextInputEvent::Delete => commands.push((
-                    NavCommand::Correction,
-                    Some(FunctionKey::Correction),
-                )),
+                TextInputEvent::Backspace | TextInputEvent::Delete => {
+                    commands.push((NavCommand::Correction, Some(FunctionKey::Correction)))
+                }
                 TextInputEvent::Home => {
                     commands.push((NavCommand::Summary, Some(FunctionKey::Summary)))
                 }
