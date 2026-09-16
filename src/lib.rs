@@ -8,9 +8,7 @@ mod sound;
 
 pub use app::GchoApp;
 pub use content::{ContentBundle, ContentFile, EditorialMessage};
-pub use experience::{
-    LiveServicePulse, TerminalTiming, public_service_slogan, selection_hint,
-};
+pub use experience::{LiveServicePulse, TerminalTiming, public_service_slogan, selection_hint};
 pub use facade::{
     FunctionKey, FunctionKeySpec, function_key_at, function_keys, snapshot_date_label,
 };
