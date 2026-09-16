@@ -4,39 +4,35 @@
 
 > 3615 GCHO is a fictional service and is not affiliated with any government administration or historic Minitel service.
 
-## MFE-0
+## Experience actuelle
 
-Le premier jalon contient une courte sequence de connexion puis sept pages : `ACCUEIL`, `ARCADE`, `MESSAGERIE`, `INFOS`, `GPE`, `NOEUD 7` et `AIDE`. Le clavier reprend des semantiques Minitel simples : chiffres + Entree (`ENVOI`), Retour arriere (`CORRECTION`), Echap (`RETOUR`) et Home (`SOMMAIRE`).
+Le service contient sept pages principales : `ACCUEIL`, `ARCADE`, `MESSAGERIE`, `INFOS`, `GPE`, `NOEUD 7` et `AIDE`, avec plusieurs sous-ecrans Videotex. L'illusion est volontairement plus importante que l'architecture : pas de backend, pas de compte, pas de chat reel et aucun appel reseau au runtime.
 
-Le contenu editorial est volontairement separe du Rust dans `content/*.json`. Le runtime embarque ces snapshots au build et possede en plus des fallbacks internes afin qu'un snapshot invalide ne rende pas le service inutilisable.
+Navigation :
+
+- chiffres `0-9` + Entree (`ENVOI`) ;
+- fleches Haut/Bas pour parcourir les choix avec bouclage ;
+- fleche Gauche ou Echap pour `RETOUR` ;
+- Retour arriere / Suppr pour `CORRECTION` ;
+- Home pour `SOMMAIRE` ;
+- `H` pour `GUIDE` ;
+- grosses touches Minitel visibles et cliquables en bas du terminal.
+
+Le demarrage joue volontairement un vieux handshake de modem, meme si cet effet est historiquement anachronique avec le Minitel. Des bips locaux accompagnent touches, validation, navigation et erreurs.
+
+## MFE-0 — squelette
+
+Premiere boucle navigable GPE, contenu editorial separe dans `content/*.json`, fallbacks internes et builds natif/Web.
 
 ## MFE-1 — profondeur de service
 
-La seconde tranche remplace plusieurs reponses d'une ligne par de vrais sous-ecrans Videotex :
-
-- `ARCADE / CLASSEMENT` ;
-- `MESSAGERIE / MA BOITE` ;
-- `INFOS / SERVICE PUBLIC` ;
-- `GPE / PROJETS` ;
-- `NOEUD 7 / LE FICHIER`.
-
-Ces ecrans restent volontairement game-local : un simple `DetailId` complete l'etat existant, sans router generique ni framework de pages. `RETOUR` ferme d'abord le sous-ecran et revient au service parent ; un second `RETOUR` remonte ensuite dans l'historique. `SOMMAIRE` efface tout et retourne a l'accueil.
+Premiers vrais sous-ecrans : `ARCADE / CLASSEMENT`, `MESSAGERIE / MA BOITE`, `INFOS / SERVICE PUBLIC`, `GPE / PROJETS`, `NOEUD 7 / LE FICHIER`.
 
 ## MFE-2 — canal editorial externe optionnel
 
-`INFOS / BREVES` consomme desormais `content/news.json`. Le snapshot peut etre remplace au moment du deploiement par **un unique feed JSON HTTPS explicitement configure**. Le runtime GPE ne fait aucun appel reseau.
+`INFOS / BREVES` consomme `content/news.json`. Le snapshot peut etre remplace au build par **un unique feed JSON HTTPS explicitement configure**. Le runtime GPE ne fait aucun appel reseau.
 
-Le fetcher `tools/fetch_external_feed.py` impose :
-
-- HTTPS uniquement, sans identifiants dans l'URL ;
-- reponse bornee a 64 Kio ;
-- maximum 8 messages ;
-- maximum 5 lignes par message ;
-- texte normalise et borne a 46 caracteres par champ/ligne ;
-- validation stricte avant remplacement ;
-- ecriture atomique du snapshot.
-
-Pour activer ce canal, definir dans le depot GitHub une variable Actions nommee `GCHO_FEED_URL` contenant l'URL HTTPS du JSON. Si la variable est absente, ou si le fetch/JSON est invalide, le build conserve simplement `content/news.json` versionne.
+Le fetcher `tools/fetch_external_feed.py` impose HTTPS, une reponse bornee a 64 Kio, maximum 8 messages, maximum 5 lignes par message, texte normalise, validation stricte et ecriture atomique.
 
 Schema attendu :
 
@@ -53,6 +49,40 @@ Schema attendu :
   ]
 }
 ```
+
+## MFE-3 — profondeur supplementaire
+
+Nouveaux sous-ecrans reels : `ARCADE / PIXEL MAZE`, `MESSAGERIE / SALONS`, `INFOS / ALERTES` et `NOEUD 7 / LES TEMOINS`.
+
+## MFE-4 — facade Minitel et audio retro
+
+Ajout des grosses touches pseudo-physiques `SOMMAIRE`, `RETOUR`, `CORRECT.`, `GUIDE`, `ENVOI`, avec feedback visuel et souris. `ENVOI` utilise un traitement vert et `CORRECT.` un traitement jaune. Le sound design est genere localement sous forme de WAV PCM deterministes : boot/modem, touche, envoi, navigation et erreur.
+
+## MFE-5 — debit et navigation directionnelle
+
+Le terminal simule par defaut **1200 bit/s**, soit environ **120 caracteres/s**, avec un petit delai de reponse avant transmission. Les changements de page recommencent une transmission progressive. En natif, le profil peut etre surcharge :
+
+```bash
+GCHO_BAUD=600 GCHO_RESPONSE_MS=500 cargo run --bin gcho
+```
+
+Sous PowerShell :
+
+```powershell
+$env:GCHO_BAUD=600
+$env:GCHO_RESPONSE_MS=500
+cargo run --bin gcho
+```
+
+## MFE-6 — service vivant
+
+Le terminal donne maintenant l'impression qu'un service continue de vivre derriere l'ecran sans reseau runtime :
+
+- le message de service public de l'accueil tourne deterministiquement entre le slogan canonique et les messages versionnes de `content/service_public.json` ;
+- une petite barre d'etat fait cycler des evenements de session (`1 NOUVEAU MESSAGE`, activite `NOEUD 7`, alerte administrative) ;
+- quand une selection aux fleches est active, cette barre affiche explicitement `SELECTION : N / ENVOI`, meme pendant la transmission lente.
+
+Tout reste local, deterministe et reproductible.
 
 ## Lancer en natif
 
@@ -77,9 +107,9 @@ Pour tester le feed sans reseau :
 python3 tools/fetch_external_feed.py --source-file mon_feed.json --output /tmp/gcho_news.json
 ```
 
-## Construire le Web
+## Construire le Web localement
 
-Le workflow Pages utilise Rust `1.97.1` et `wasm-bindgen-cli 0.2.127`, puis assemble `dist/` avec :
+Le workflow utilise Rust `1.97.1` et `wasm-bindgen-cli 0.2.127`. Construction manuelle :
 
 ```bash
 cargo build --release --target wasm32-unknown-unknown --bin gcho-web
@@ -87,9 +117,11 @@ wasm-bindgen --target web --out-name gcho-web --out-dir dist/pkg target/wasm32-u
 cp web/index.html dist/index.html
 ```
 
-Servir ensuite `dist/` avec un serveur HTTP local. Le HTML n'utilise que des chemins relatifs, donc le deploiement fonctionne sous `/gpe_3615_gcho/` et ne suppose pas la racine du domaine.
+Servir ensuite `dist/` avec un serveur HTTP local. Le HTML n'utilise que des chemins relatifs.
 
-## Contenu externe et regeneration
+Le depot contient encore le workflow `.github/workflows/pages.yml`, mais le deploiement public GitHub Pages est volontairement differe. Le developpement et les validations courantes restent local-first.
+
+## Contenu et regeneration
 
 Snapshots :
 
@@ -105,27 +137,11 @@ python3 tools/generate_content.py --date 2026-09-15
 python3 tools/generate_content.py --check
 ```
 
-`tools/fetch_external_feed.py` ne modifie `news.json` qu'apres telechargement, parsing et normalisation reussis. Une erreur conserve donc le dernier snapshot valide.
-
-## GitHub Pages
-
-`.github/workflows/pages.yml` :
-
-1. regenere le contenu local ;
-2. tente le feed externe si `GCHO_FEED_URL` est configure ;
-3. valide les snapshots ;
-4. compile `gcho-web` en WASM ;
-5. genere le glue JavaScript avec `wasm-bindgen` ;
-6. assemble `dist/` ;
-7. publie l'artifact Pages.
-
-Le workflow se declenche sur `main`, manuellement, et chaque jour a `04:23 UTC`.
-
-**Activation initiale requise :** GitHub a confirme en CI que le `GITHUB_TOKEN` du workflow peut construire le site mais ne peut pas creer le site Pages du depot (`Resource not accessible by integration`). Une seule activation manuelle est donc necessaire dans **Settings > Pages**, avec la source **GitHub Actions**. Apres cette activation, les deploiements restent automatiques.
+`tools/fetch_external_feed.py` ne modifie `news.json` qu'apres telechargement, parsing et normalisation reussis. Une erreur conserve le dernier snapshot valide.
 
 ## Limites actuelles
 
-Pas de vrai protocole Minitel, modem, compte, chat, backend, base de donnees, CMS, analytics, publicite, scraper generique ou contenu LLM live. Le canal externe est volontairement un feed JSON unique et borne, pas une plateforme d'ingestion generique.
+Pas de vrai protocole Minitel, compte, chat, backend, base de donnees, CMS, analytics, publicite, scraper generique ou contenu LLM live. Le canal externe reste volontairement un feed JSON unique et borne, pas une plateforme d'ingestion generique.
 
 ## Architecture
 
@@ -133,10 +149,12 @@ Le code reste volontairement petit :
 
 - `src/service.rs` : etat, navigation et sous-ecrans ;
 - `src/content.rs` : parsing et fallbacks editoriaux ;
+- `src/experience.rs` : debit simule, rotation et etat vivant de session ;
 - `src/app.rs` : adaptation input GPE + boucle runtime ;
 - `src/render.rs` : rendu Videotex framebuffer-only ;
+- `src/sound.rs` : cues audio locaux ;
 - `tools/generate_content.py` : generation locale deterministe ;
 - `tools/fetch_external_feed.py` : ingestion build-time optionnelle et bornee ;
 - `web/index.html` : shell plein ecran minimal.
 
-**Aucune modification de GPE n'est requise.** Les chiffres et commandes d'edition passent par l'API publique `TextInputEvent`, tandis qu'Entree/Echap utilisent les touches physiques deja exposees.
+**Aucune modification de GPE n'est requise.**
