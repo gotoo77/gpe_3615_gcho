@@ -145,7 +145,12 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
             section_rule(framebuffer, 48, "FIL DES BREVES", CYAN);
             render_editorial_full(framebuffer, 62, &content.news, CYAN);
             text(framebuffer, 162, "SOURCE : SNAPSHOT EDITORIAL", DIM);
-            text(framebuffer, 174, "MISE A JOUR AU PROCHAIN DEPLOIEMENT.", DIM);
+            text(
+                framebuffer,
+                174,
+                "MISE A JOUR AU PROCHAIN DEPLOIEMENT.",
+                DIM,
+            );
         }
         DetailId::ServicePublic => {
             section_rule(framebuffer, 48, "TRANSMISSION OFFICIELLE", CYAN);
