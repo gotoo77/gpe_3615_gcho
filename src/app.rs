@@ -46,7 +46,8 @@ impl GchoApp {
         Self {
             service: Service::new(),
             content: ContentBundle::load_bundled(),
-            minitel_logo: decode_minitel_logo().expect("bundled 3615 GCHO Minitel logo must decode"),
+            minitel_logo: decode_minitel_logo()
+                .expect("bundled 3615 GCHO Minitel logo must decode"),
             timing,
             live_pulse: LiveServicePulse::new(),
             boot_elapsed: 0.0,
@@ -198,7 +199,8 @@ impl Game for GchoApp {
             self.blink_elapsed < 0.55,
             self.active_function_key,
         );
-        if self.service.current_page() == PageId::Accueil && self.service.current_detail().is_none() {
+        if self.service.current_page() == PageId::Accueil && self.service.current_detail().is_none()
+        {
             render_accueil_branding(frame.framebuffer, &self.service, &self.minitel_logo);
         }
         if self.service.current_page() == PageId::Accueil
