@@ -1,6 +1,7 @@
 use gotoo_pixel_engine::{Framebuffer, Pixel};
 
 use crate::content::{ContentBundle, ContentFile};
+use crate::facade::{FunctionKey, function_keys, snapshot_date_label};
 use crate::service::{DetailId, PageId, Service};
 
 const BG: Pixel = Pixel::rgb(2, 7, 10);
@@ -50,6 +51,7 @@ pub fn render_terminal(
     service: &Service,
     content: &ContentBundle,
     cursor_visible: bool,
+    active_function_key: Option<FunctionKey>,
 ) {
     terminal_background(framebuffer);
     frame(framebuffer);
@@ -64,12 +66,7 @@ pub fn render_terminal(
         draw_center(framebuffer, 29, detail_title(detail), YELLOW, 1);
         render_detail(framebuffer, detail, content);
         render_notice(framebuffer, service.notice());
-        framebuffer.draw_line(8, 216, 311, 216, BLUE);
-        framebuffer.draw_text(11, 221, "SOMMAIRE  RETOUR", DIM);
-        framebuffer.draw_text(11, 231, "FIN DE PAGE", OFF_WHITE);
-        if cursor_visible {
-            framebuffer.fill_rect(92, 230, 5, 8, CYAN);
-        }
+        render_function_keys(framebuffer, active_function_key);
         return;
     }
 
@@ -97,15 +94,16 @@ pub fn render_terminal(
     render_page_content(framebuffer, page, content);
     render_notice(framebuffer, service.notice());
 
-    framebuffer.draw_line(8, 216, 311, 216, BLUE);
-    framebuffer.draw_text(11, 221, "SOMMAIRE  RETOUR  GUIDE             ENVOI", DIM);
-    framebuffer.draw_text(11, 231, "VOTRE CHOIX ?", OFF_WHITE);
-    if let Some(digit) = service.pending_digit() {
-        framebuffer.draw_text(96, 231, &digit.to_string(), CYAN);
+    if service.notice().is_none() {
+        framebuffer.draw_text(11, 198, "VOTRE CHOIX ?", OFF_WHITE);
+        if let Some(digit) = service.pending_digit() {
+            framebuffer.draw_text(96, 198, &digit.to_string(), CYAN);
+        }
+        if cursor_visible {
+            framebuffer.fill_rect(104, 197, 5, 8, CYAN);
+        }
     }
-    if cursor_visible {
-        framebuffer.fill_rect(104, 230, 5, 8, CYAN);
-    }
+    render_function_keys(framebuffer, active_function_key);
 }
 
 fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &ContentBundle) {
@@ -163,13 +161,14 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
         DetailId::News => {
             section_rule(framebuffer, 48, "FIL DES BREVES", CYAN);
             render_editorial_full(framebuffer, 62, &content.news, CYAN);
-            text(framebuffer, 162, "SOURCE : SNAPSHOT EDITORIAL", DIM);
+            text(framebuffer, 158, "SOURCE : SNAPSHOT EDITORIAL", DIM);
             text(
                 framebuffer,
-                174,
-                "MISE A JOUR AU PROCHAIN DEPLOIEMENT.",
-                DIM,
+                172,
+                &snapshot_date_label(&content.news.generated_at),
+                CYAN,
             );
+            text(framebuffer, 186, "MAJ AU PROCHAIN RAFRAICHISSEMENT.", DIM);
         }
         DetailId::ServicePublic => {
             section_rule(framebuffer, 48, "TRANSMISSION OFFICIELLE", CYAN);
@@ -268,6 +267,7 @@ fn render_page_content(framebuffer: &mut Framebuffer, page: PageId, content: &Co
             framebuffer.draw_text(14, 114, "RETOUR ARR CORRECTION", OFF_WHITE);
             framebuffer.draw_text(14, 127, "ECHAP      RETOUR", OFF_WHITE);
             framebuffer.draw_text(14, 140, "DEBUT/HOME SOMMAIRE", OFF_WHITE);
+            framebuffer.draw_text(14, 153, "H          GUIDE", OFF_WHITE);
         }
         PageId::Gpe => {
             framebuffer.draw_text(14, 114, "RUNTIME: GPE / RUST / WEBGPU", GREEN);
@@ -291,6 +291,53 @@ fn render_notice(framebuffer: &mut Framebuffer, notice: Option<&str>) {
     if notice.chars().count() > 46 {
         let rest: String = notice.chars().skip(46).collect();
         framebuffer.draw_text(14, 200, &fit(rest.trim_start(), 46), YELLOW);
+    }
+}
+
+fn render_function_keys(framebuffer: &mut Framebuffer, active: Option<FunctionKey>) {
+    for spec in function_keys() {
+        let pressed = active == Some(spec.key);
+        let (face, border, ink) = match (spec.key, pressed) {
+            (FunctionKey::Send, false) => (Pixel::rgb(12, 62, 30), GREEN, GREEN),
+            (FunctionKey::Correction, false) => (Pixel::rgb(48, 40, 10), YELLOW, YELLOW),
+            (_, false) => (Pixel::rgb(10, 28, 34), DIM, OFF_WHITE),
+            (FunctionKey::Send, true) => (GREEN, OFF_WHITE, BG),
+            (FunctionKey::Correction, true) => (YELLOW, OFF_WHITE, BG),
+            (_, true) => (CYAN, OFF_WHITE, BG),
+        };
+
+        framebuffer.fill_rect(
+            spec.x + 2,
+            spec.y + 2,
+            spec.width as u32,
+            spec.height as u32,
+            Pixel::rgb(1, 4, 5),
+        );
+        framebuffer.fill_rect(
+            spec.x,
+            spec.y,
+            spec.width as u32,
+            spec.height as u32,
+            face,
+        );
+        framebuffer.draw_rect(
+            spec.x,
+            spec.y,
+            spec.width as u32,
+            spec.height as u32,
+            border,
+        );
+        framebuffer.draw_line(
+            spec.x + 2,
+            spec.y + 2,
+            spec.x + spec.width - 3,
+            spec.y + 2,
+            if pressed { OFF_WHITE } else { DIM },
+        );
+
+        let (label_width, _) = Framebuffer::text_size(spec.label, 1);
+        let label_x = spec.x + ((spec.width - label_width as i32) / 2).max(2);
+        framebuffer.draw_text(label_x, spec.y + 7, spec.label, ink);
     }
 }
 
