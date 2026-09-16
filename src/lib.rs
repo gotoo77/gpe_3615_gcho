@@ -1,11 +1,17 @@
 mod app;
 mod content;
+mod facade;
 mod render;
 mod service;
+mod sound;
 
 pub use app::GchoApp;
 pub use content::{ContentBundle, ContentFile, EditorialMessage};
+pub use facade::{
+    FunctionKey, FunctionKeySpec, function_key_at, function_keys, snapshot_date_label,
+};
 pub use service::{DetailId, Entry, NavCommand, PageId, Service};
+pub use sound::{RetroCue, play_retro_cue, register_retro_audio};
 
 use gotoo_pixel_engine::EngineConfig;
 

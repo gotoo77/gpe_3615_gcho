@@ -30,6 +30,7 @@ pub enum NavCommand {
     Correction,
     Return,
     Summary,
+    Guide,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -355,6 +356,12 @@ impl Service {
                 self.current = self.history.pop().unwrap_or(PageId::Accueil);
             }
             NavCommand::Summary => self.go_summary(),
+            NavCommand::Guide => {
+                self.pending = None;
+                self.notice = None;
+                self.detail = None;
+                self.follow(Target::Page(PageId::Aide));
+            }
         }
     }
 
