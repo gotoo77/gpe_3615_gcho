@@ -11,6 +11,10 @@ class WebShellContractTests(unittest.TestCase):
         self.assertIn("100dvh", INDEX)
         self.assertIn("min(100vw, calc(100dvh * 4 / 3), 960px)", INDEX)
 
+    def test_responsive_canvas_overrides_runtime_inline_css_size(self):
+        self.assertIn("width: min(100vw, calc(100dvh * 4 / 3), 960px) !important", INDEX)
+        self.assertIn("height: min(100dvh, calc(100vw * 3 / 4), 720px) !important", INDEX)
+
     def test_winit_control_flow_exception_is_not_reported_as_terminal_failure(self):
         self.assertIn("Using exceptions for control flow", INDEX)
         self.assertIn("startsWith", INDEX)
