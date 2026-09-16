@@ -110,7 +110,7 @@ const ARCADE: &[Entry] = &[
     Entry {
         key: 4,
         label: "DEMONSTRATIONS",
-        target: Target::Notice("DEMO 16 COULEURS. DEUX SONT ACTUELLEMENT EN GREVE."),
+        target: Target::Notice("DEMO 16 COULEURS. DEUX SONT EN GREVE."),
     },
     Entry {
         key: 5,
@@ -138,12 +138,12 @@ const MESSAGERIE: &[Entry] = &[
     Entry {
         key: 4,
         label: "PETITES ANNONCES",
-        target: Target::Notice("VENDS MINITEL TBE. 18400 HEURES. PREMIERE MAIN, OU PRESQUE."),
+        target: Target::Notice("VENDS MINITEL TBE. 18400 H. PRESQUE NEUF."),
     },
     Entry {
         key: 5,
         label: "CARNET D'ADRESSES",
-        target: Target::Notice("1 CONTACT ENREGISTRE. IL VOUS A BLOQUE EN 1987."),
+        target: Target::Notice("1 CONTACT. IL VOUS A BLOQUE EN 1987."),
     },
 ];
 
@@ -166,17 +166,17 @@ const INFOS: &[Entry] = &[
     Entry {
         key: 4,
         label: "CONSEILS PRATIQUES",
-        target: Target::Notice("EN CAS DE PANNE: ETEIGNEZ, RALLUMEZ, PUIS NIEZ L'INCIDENT."),
+        target: Target::Notice("PANNE: ETEIGNEZ, RALLUMEZ, NIEZ L'INCIDENT."),
     },
     Entry {
         key: 5,
         label: "COMMUNIQUES",
-        target: Target::Notice("LE SERVICE COMMUNICATION COMMUNIQUERA DES QU'IL N'AURA RIEN A DIRE."),
+        target: Target::Notice("COMMUNIQUE PREVU DES QU'IL N'Y AURA RIEN."),
     },
     Entry {
         key: 6,
         label: "RECTIFICATIFS",
-        target: Target::Notice("LE RECTIFICATIF PRECEDENT EST RECTIFIE. CELUI-CI AUSSI."),
+        target: Target::Notice("RECTIFICATIF RECTIFIE. CELUI-CI AUSSI."),
     },
 ];
 
@@ -184,7 +184,7 @@ const GPE: &[Entry] = &[
     Entry {
         key: 1,
         label: "MOTEUR PIXEL",
-        target: Target::Notice("GPE: PIXELS 100% LOCAUX. AUCUN PIXEL N'A ETE EXTERNALISE."),
+        target: Target::Notice("GPE: PIXELS LOCAUX. AUCUN PIXEL EXTERNALISE."),
     },
     Entry {
         key: 2,
@@ -212,17 +212,17 @@ const NOEUD7: &[Entry] = &[
     Entry {
         key: 3,
         label: "CARTES",
-        target: Target::Notice("CARTE INDISPONIBLE. CET ENDROIT N'EST PAS CONFORME A LA GEOGRAPHIE."),
+        target: Target::Notice("CARTE REFUSEE: ENDROIT NON GEOGRAPHIQUE."),
     },
     Entry {
         key: 4,
         label: "EXPERIENCES",
-        target: Target::Notice("SUJET TOUJOURS CONNECTE. SUJET NIE ETRE CONNECTE."),
+        target: Target::Notice("SUJET CONNECTE. SUJET NIE ETRE CONNECTE."),
     },
     Entry {
         key: 5,
         label: "CONTACT",
-        target: Target::Notice("LE CONTACT VOUS A DEJA CONTACTE. VOUS NE VOUS EN SOUVENEZ PAS."),
+        target: Target::Notice("LE CONTACT A DEJA APPELE. VOUS AVEZ OUBLIE."),
     },
     Entry {
         key: 6,
