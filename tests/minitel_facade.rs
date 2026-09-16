@@ -64,7 +64,7 @@ fn retro_audio_catalog_is_local_wav_and_has_distinct_cues() {
     let mut audio = RecordingAudio::default();
     register_retro_audio(&mut audio).expect("retro audio should register");
 
-    assert_eq!(audio.registered.len(), 5);
+    assert_eq!(audio.registered.len(), 6);
     assert!(
         audio
             .registered
@@ -78,15 +78,16 @@ fn retro_audio_catalog_is_local_wav_and_has_distinct_cues() {
         RetroCue::Send,
         RetroCue::Error,
         RetroCue::Navigate,
+        RetroCue::DataChunk,
     ] {
         play_retro_cue(&mut audio, cue).expect("retro cue should play");
     }
 
-    assert_eq!(audio.played.len(), 5);
+    assert_eq!(audio.played.len(), 6);
     let mut distinct = audio.played.clone();
     distinct.sort_unstable();
     distinct.dedup();
-    assert_eq!(distinct.len(), 5);
+    assert_eq!(distinct.len(), 6);
 }
 
 #[test]
