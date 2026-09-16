@@ -82,10 +82,7 @@ pub fn function_key_at(x: i32, y: i32) -> Option<FunctionKey> {
     FUNCTION_KEYS
         .iter()
         .find(|spec| {
-            x >= spec.x
-                && x < spec.x + spec.width
-                && y >= spec.y
-                && y < spec.y + spec.height
+            x >= spec.x && x < spec.x + spec.width && y >= spec.y && y < spec.y + spec.height
         })
         .map(|spec| spec.key)
 }
