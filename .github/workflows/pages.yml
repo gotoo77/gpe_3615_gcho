@@ -31,12 +31,23 @@ jobs:
       - name: Install wasm-bindgen CLI
         run: cargo install wasm-bindgen-cli --version 0.2.127 --locked
 
-      - name: Refresh editorial snapshot opportunistically
+      - name: Refresh editorial snapshots opportunistically
         shell: bash
+        env:
+          GCHO_FEED_URL: ${{ vars.GCHO_FEED_URL }}
         run: |
           if ! python3 tools/generate_content.py; then
-            echo "::warning::content refresh failed; using committed valid snapshot"
+            echo "::warning::local content refresh failed; using committed valid snapshot"
           fi
+
+          if [[ -n "${GCHO_FEED_URL:-}" ]]; then
+            if ! python3 tools/fetch_external_feed.py --url "$GCHO_FEED_URL"; then
+              echo "::warning::external feed refresh failed; using committed news snapshot"
+            fi
+          else
+            echo "No GCHO_FEED_URL configured; using committed news snapshot"
+          fi
+
           python3 tools/generate_content.py --check
 
       - name: Build Web application
@@ -57,8 +68,6 @@ jobs:
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
-        with:
-          enablement: true
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v5
