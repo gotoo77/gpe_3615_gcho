@@ -7,7 +7,9 @@ mod render;
 mod service;
 mod sound;
 
-pub use app::GchoApp;
+pub use app::{
+    BOOT_DURATION_SECONDS, BRANDING_SPLASH_DURATION_SECONDS, GchoApp, StartupStage, startup_stage,
+};
 pub use branding::{ACCUEIL_LOGO_RECT, decode_minitel_logo};
 pub use content::{ContentBundle, ContentFile, EditorialMessage};
 pub use experience::{
