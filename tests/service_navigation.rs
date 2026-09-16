@@ -72,6 +72,10 @@ fn key_services_open_real_detail_screens() {
 
     service.apply(NavCommand::Summary);
     open_page(&mut service, 3);
+    open_page(&mut service, 1);
+    assert_eq!(service.current_detail(), Some(DetailId::News));
+
+    service.apply(NavCommand::Return);
     open_page(&mut service, 2);
     assert_eq!(service.current_detail(), Some(DetailId::ServicePublic));
 

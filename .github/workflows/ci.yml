@@ -28,6 +28,9 @@ jobs:
       - name: Validate committed editorial content
         run: python3 tools/generate_content.py --check
 
+      - name: Test external editorial feed contract
+        run: python3 -m unittest discover -s tools -p 'test_*.py'
+
       - name: Exercise deterministic content generation
         run: |
           python3 tools/generate_content.py --date 2026-09-15
