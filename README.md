@@ -1,5 +1,9 @@
 # 3615 GCHO
 
+<p align="center">
+  <img src="assets/branding/3615_gcho_logo.png" alt="3615 GCHO — La canicule en réseau" width="600">
+</p>
+
 **3615 GCHO** est un faux service Minitel/Videotex francais construit avec [GPE](https://github.com/gotoo77/gotoo-pixel-engine). La page Web est le terminal : pas de barre de navigation moderne, pas de boutons HTML autour du framebuffer.
 
 > 3615 GCHO is a fictional service and is not affiliated with any government administration or historic Minitel service.
@@ -88,6 +92,10 @@ Tout reste local, deterministe et reproductible.
 
 Pendant une transmission, un cue tres court et discret accompagne chaque **chunk logique de 16 caracteres recus**. Le son n'est pas joue pendant le delai de reponse initial et ne se repete pas entre deux frames tant qu'aucune nouvelle frontiere de chunk n'est franchie. Comme les autres sons GCHO, il est genere localement et deterministiquement, sans asset audio externe.
 
+## MFE-8 — branding accueil
+
+L'accueil integre le logo Minitel fourni dans le framebuffer GPE. L'image est embarquee dans le binaire/WASM, decodee une seule fois au demarrage puis rendue en `Contain` avec filtrage `Nearest`. Le branding reste limite a l'accueil ; les autres pages conservent leur header texte compact.
+
 ## Lancer en natif
 
 ```bash
@@ -154,6 +162,7 @@ Le code reste volontairement petit :
 - `src/service.rs` : etat, navigation et sous-ecrans ;
 - `src/content.rs` : parsing et fallbacks editoriaux ;
 - `src/experience.rs` : debit simule, chunks, rotation et etat vivant de session ;
+- `src/branding.rs` : asset Minitel embarque et composition specifique de l'accueil ;
 - `src/app.rs` : adaptation input GPE + boucle runtime ;
 - `src/render.rs` : rendu Videotex framebuffer-only ;
 - `src/sound.rs` : cues audio locaux ;
@@ -161,4 +170,4 @@ Le code reste volontairement petit :
 - `tools/fetch_external_feed.py` : ingestion build-time optionnelle et bornee ;
 - `web/index.html` : shell plein ecran minimal.
 
-**Aucune modification de GPE n'est requise.**
+**Aucune modification de GPE n'est requise.** L'integration du branding reutilise les primitives image existantes (`Image`, `ImageFit::Contain`, `ImageFilter::Nearest`).
