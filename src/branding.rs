@@ -8,6 +8,7 @@ const OFF_WHITE: Pixel = Pixel::rgb(225, 232, 218);
 const CYAN: Pixel = Pixel::rgb(50, 220, 225);
 const BLUE: Pixel = Pixel::rgb(80, 130, 255);
 const RED: Pixel = Pixel::rgb(245, 85, 75);
+const YELLOW: Pixel = Pixel::rgb(245, 215, 70);
 
 pub const ACCUEIL_LOGO_RECT: Rect = Rect {
     x: 85,
@@ -109,6 +110,10 @@ pub(crate) fn render_accueil_branding(
 
     framebuffer.draw_line(98, 190, 305, 190, DIM);
     framebuffer.draw_text(101, 192, "FICTION TELEMATIQUE // CANAL ROYAL", DIM);
+
+    if let Some(notice) = service.notice() {
+        render_home_notice(framebuffer, notice);
+    }
 }
 
 fn render_royal_bust(framebuffer: &mut Framebuffer) {
@@ -141,6 +146,16 @@ fn render_royal_bust(framebuffer: &mut Framebuffer) {
     framebuffer.draw_line(LEFT + 40, TOP + 71, LEFT + 40, TOP + 85, DIM);
 
     framebuffer.draw_text(LEFT + 8, TOP + 88, "MACRONUS IER", CYAN);
+}
+
+fn render_home_notice(framebuffer: &mut Framebuffer, notice: &str) {
+    framebuffer.fill_rect(98, 168, 213, 30, Pixel::rgb(8, 24, 28));
+    framebuffer.draw_rect(98, 168, 213, 30, RED);
+    framebuffer.draw_text(103, 174, &fit(notice, 31), YELLOW);
+    if notice.chars().count() > 31 {
+        let rest: String = notice.chars().skip(31).collect();
+        framebuffer.draw_text(103, 185, &fit(rest.trim_start(), 31), YELLOW);
+    }
 }
 
 fn draw_center(framebuffer: &mut Framebuffer, y: i32, text: &str, color: Pixel) {
