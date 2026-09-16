@@ -14,10 +14,42 @@ pub const ACCUEIL_LOGO_RECT: Rect = Rect {
     height: 50,
 };
 
+const SPLASH_LOGO_RECT: Rect = Rect {
+    x: 40,
+    y: 72,
+    width: 240,
+    height: 80,
+};
+
 pub fn decode_minitel_logo() -> Result<Image, ImageError> {
     Image::decode_png(include_bytes!(
         "../assets/branding/3615_gcho_logo_minitel.png"
     ))
+}
+
+pub(crate) fn render_branding_splash(framebuffer: &mut Framebuffer, logo: &Image) {
+    framebuffer.clear(BG);
+    for y in (0..framebuffer.height() as i32).step_by(4) {
+        framebuffer.draw_line(
+            0,
+            y,
+            framebuffer.width() as i32 - 1,
+            y,
+            Pixel::rgb(3, 12, 15),
+        );
+    }
+
+    draw_center(framebuffer, 34, "CONNEXION ETABLIE", CYAN);
+    framebuffer.draw_line(40, 59, 279, 59, DIM);
+    framebuffer.draw_image_fit(
+        logo,
+        SPLASH_LOGO_RECT,
+        ImageFit::Contain,
+        ImageFilter::Nearest,
+    );
+    framebuffer.draw_line(40, 164, 279, 164, DIM);
+    draw_center(framebuffer, 177, "SERVICE VIDEOTEX GCHO", OFF_WHITE);
+    draw_center(framebuffer, 204, "ENTREE / ECHAP : PASSER", DIM);
 }
 
 pub(crate) fn render_accueil_branding(
