@@ -98,8 +98,8 @@ impl LiveServicePulse {
     }
 
     pub fn status(self) -> &'static str {
-        let slot = ((self.elapsed_seconds / STATUS_PERIOD_SECONDS).floor() as usize)
-            % LIVE_STATUSES.len();
+        let slot =
+            ((self.elapsed_seconds / STATUS_PERIOD_SECONDS).floor() as usize) % LIVE_STATUSES.len();
         LIVE_STATUSES[slot]
     }
 }
