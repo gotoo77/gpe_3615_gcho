@@ -89,3 +89,23 @@ pub fn function_key_at(x: i32, y: i32) -> Option<FunctionKey> {
         })
         .map(|spec| spec.key)
 }
+
+pub fn snapshot_date_label(generated_at: &str) -> String {
+    let date = generated_at.get(..10);
+    let Some(date) = date else {
+        return "SNAPSHOT : LOCAL".into();
+    };
+    let bytes = date.as_bytes();
+    let valid = bytes.len() == 10
+        && bytes[4] == b'-'
+        && bytes[7] == b'-'
+        && bytes
+            .iter()
+            .enumerate()
+            .all(|(index, byte)| matches!(index, 4 | 7) || byte.is_ascii_digit());
+    if !valid {
+        return "SNAPSHOT : LOCAL".into();
+    }
+
+    format!("SNAPSHOT : {}/{}/{}", &date[8..10], &date[5..7], &date[..4])
+}
