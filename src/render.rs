@@ -141,6 +141,12 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
                 OFF_WHITE,
             );
         }
+        DetailId::News => {
+            section_rule(framebuffer, 48, "FIL DES BREVES", CYAN);
+            render_editorial_full(framebuffer, 62, &content.news, CYAN);
+            text(framebuffer, 162, "SOURCE : SNAPSHOT EDITORIAL", DIM);
+            text(framebuffer, 174, "MISE A JOUR AU PROCHAIN DEPLOIEMENT.", DIM);
+        }
         DetailId::ServicePublic => {
             section_rule(framebuffer, 48, "TRANSMISSION OFFICIELLE", CYAN);
             render_editorial_full(framebuffer, 62, &content.service_public, CYAN);
@@ -185,7 +191,7 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
 
 fn render_page_content(framebuffer: &mut Framebuffer, page: PageId, content: &ContentBundle) {
     match page {
-        PageId::Infos => render_editorial(framebuffer, 146, &content.service_public, CYAN),
+        PageId::Infos => render_editorial(framebuffer, 146, &content.news, CYAN),
         PageId::Messagerie => render_editorial(framebuffer, 143, &content.messages, GREEN),
         PageId::Noeud7 => render_editorial(framebuffer, 146, &content.secrets, RED),
         PageId::Aide => {
@@ -286,6 +292,7 @@ fn detail_title(detail: DetailId) -> &'static str {
     match detail {
         DetailId::ArcadeScores => "ARCADE / CLASSEMENT",
         DetailId::Mailbox => "MESSAGERIE / MA BOITE",
+        DetailId::News => "INFOS / BREVES",
         DetailId::ServicePublic => "INFOS / SERVICE PUBLIC",
         DetailId::GpeProjects => "GPE / PROJETS",
         DetailId::Node7File => "NOEUD 7 / LE FICHIER",
