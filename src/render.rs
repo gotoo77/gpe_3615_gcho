@@ -1,7 +1,7 @@
 use gotoo_pixel_engine::{Framebuffer, Pixel};
 
 use crate::content::{ContentBundle, ContentFile};
-use crate::service::{PageId, Service};
+use crate::service::{DetailId, PageId, Service};
 
 const BG: Pixel = Pixel::rgb(2, 7, 10);
 const DIM: Pixel = Pixel::rgb(20, 48, 55);
@@ -60,6 +60,19 @@ pub fn render_terminal(
     framebuffer.draw_text(258, 9, page_number, DIM);
     framebuffer.draw_line(8, 20, 311, 20, BLUE);
 
+    if let Some(detail) = service.current_detail() {
+        draw_center(framebuffer, 29, detail_title(detail), YELLOW, 1);
+        render_detail(framebuffer, detail, content);
+        render_notice(framebuffer, service.notice());
+        framebuffer.draw_line(8, 216, 311, 216, BLUE);
+        framebuffer.draw_text(11, 221, "SOMMAIRE  RETOUR", DIM);
+        framebuffer.draw_text(11, 231, "FIN DE PAGE", OFF_WHITE);
+        if cursor_visible {
+            framebuffer.fill_rect(92, 230, 5, 8, CYAN);
+        }
+        return;
+    }
+
     draw_center(framebuffer, 29, title, YELLOW, 1);
     if page == PageId::Accueil {
         draw_center(framebuffer, 41, "L'ESPRIT EST EN RESEAU", GREEN, 1);
@@ -82,16 +95,7 @@ pub fn render_terminal(
     }
 
     render_page_content(framebuffer, page, content);
-
-    if let Some(notice) = service.notice() {
-        framebuffer.fill_rect(9, 184, 302, 26, Pixel::rgb(8, 24, 28));
-        framebuffer.draw_rect(9, 184, 302, 26, RED);
-        framebuffer.draw_text(14, 190, &fit(notice, 46), YELLOW);
-        if notice.chars().count() > 46 {
-            let rest: String = notice.chars().skip(46).collect();
-            framebuffer.draw_text(14, 200, &fit(rest.trim_start(), 46), YELLOW);
-        }
-    }
+    render_notice(framebuffer, service.notice());
 
     framebuffer.draw_line(8, 216, 311, 216, BLUE);
     framebuffer.draw_text(11, 221, "SOMMAIRE  RETOUR  GUIDE             ENVOI", DIM);
@@ -101,6 +105,81 @@ pub fn render_terminal(
     }
     if cursor_visible {
         framebuffer.fill_rect(104, 230, 5, 8, CYAN);
+    }
+}
+
+fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &ContentBundle) {
+    match detail {
+        DetailId::ArcadeScores => {
+            section_rule(framebuffer, 48, "TABLE DES SCORES", GREEN);
+            text(framebuffer, 62, "01  ADMIN ............... 999999", YELLOW);
+            text(
+                framebuffer,
+                76,
+                "02  XAVIER_92 ........... 042361",
+                OFF_WHITE,
+            );
+            text(
+                framebuffer,
+                90,
+                "03  GUEST ............... 000120",
+                OFF_WHITE,
+            );
+            text(framebuffer, 116, "CREDITS DISPONIBLES : 00", CYAN);
+            text(framebuffer, 132, "POUR JOUER, VEUILLEZ INSERER", OFF_WHITE);
+            text(framebuffer, 144, "UNE PIECE DANS VOTRE MINITEL.", OFF_WHITE);
+        }
+        DetailId::Mailbox => {
+            section_rule(framebuffer, 48, "BOITE DE RECEPTION", GREEN);
+            render_editorial_full(framebuffer, 62, &content.messages, GREEN);
+            text(framebuffer, 150, "ETAT : NON LU", YELLOW);
+            text(framebuffer, 164, "REPONSE IMPOSSIBLE :", OFF_WHITE);
+            text(
+                framebuffer,
+                176,
+                "DESTINATAIRE HORS LIGNE DEPUIS 1992.",
+                OFF_WHITE,
+            );
+        }
+        DetailId::ServicePublic => {
+            section_rule(framebuffer, 48, "TRANSMISSION OFFICIELLE", CYAN);
+            render_editorial_full(framebuffer, 62, &content.service_public, CYAN);
+            text(framebuffer, 162, "MESSAGE AUTOMATIQUEMENT APPROUVE", DIM);
+            text(framebuffer, 174, "PAR LE MINISTERE DE LA NORMALITE.", DIM);
+        }
+        DetailId::GpeProjects => {
+            section_rule(framebuffer, 48, "PROJETS ACCESSIBLES", GREEN);
+            text(framebuffer, 62, "GPE .......... MOTEUR PIXEL", CYAN);
+            text(framebuffer, 78, "DRUID ........ CANAL FANTOME", OFF_WHITE);
+            text(
+                framebuffer,
+                94,
+                "VOID ......... TRANSMISSION VERTICALE",
+                OFF_WHITE,
+            );
+            text(
+                framebuffer,
+                110,
+                "SIX-SEVEN .... PROTOCOLE NON DOCUMENTE",
+                OFF_WHITE,
+            );
+            text(
+                framebuffer,
+                138,
+                "STATUT : EN CONSTRUCTION PERMANENTE",
+                GREEN,
+            );
+            text(framebuffer, 154, "CERTAINS SERVICES PEUVENT EXISTER", DIM);
+            text(framebuffer, 166, "AVANT LEUR DATE DE CREATION.", DIM);
+        }
+        DetailId::Node7File => {
+            section_rule(framebuffer, 48, "DOSSIER 7/7", RED);
+            render_editorial_full(framebuffer, 62, &content.secrets, RED);
+            text(framebuffer, 148, "ORIGINE DU SIGNAL : ICI", YELLOW);
+            text(framebuffer, 164, "DATE D'OUVERTURE : 00/00/0000", OFF_WHITE);
+            text(framebuffer, 180, "DATE DE FERMETURE : EN COURS", OFF_WHITE);
+            text(framebuffer, 198, "NE DECONNECTEZ PAS LE TERMINAL.", RED);
+        }
     }
 }
 
@@ -124,9 +203,20 @@ fn render_page_content(framebuffer: &mut Framebuffer, page: PageId, content: &Co
             framebuffer.draw_text(14, 146, "CREDITS: 00", GREEN);
             framebuffer.draw_text(14, 159, "HAUT SCORE: ADMIN", YELLOW);
         }
-        PageId::Accueil => {
-            framebuffer.draw_text(14, 172, "RESEAU GCHO: OUVERT", GREEN);
-        }
+        PageId::Accueil => framebuffer.draw_text(14, 172, "RESEAU GCHO: OUVERT", GREEN),
+    }
+}
+
+fn render_notice(framebuffer: &mut Framebuffer, notice: Option<&str>) {
+    let Some(notice) = notice else {
+        return;
+    };
+    framebuffer.fill_rect(9, 184, 302, 26, Pixel::rgb(8, 24, 28));
+    framebuffer.draw_rect(9, 184, 302, 26, RED);
+    framebuffer.draw_text(14, 190, &fit(notice, 46), YELLOW);
+    if notice.chars().count() > 46 {
+        let rest: String = notice.chars().skip(46).collect();
+        framebuffer.draw_text(14, 200, &fit(rest.trim_start(), 46), YELLOW);
     }
 }
 
@@ -138,6 +228,31 @@ fn render_editorial(framebuffer: &mut Framebuffer, y: i32, file: &ContentFile, a
     for (index, line) in message.body.iter().take(2).enumerate() {
         framebuffer.draw_text(14, y + 12 + index as i32 * 10, &fit(line, 46), OFF_WHITE);
     }
+}
+
+fn render_editorial_full(framebuffer: &mut Framebuffer, y: i32, file: &ContentFile, accent: Pixel) {
+    let Some(message) = file.messages.first() else {
+        text(framebuffer, y, "AUCUNE DONNEE DISPONIBLE.", RED);
+        return;
+    };
+    text(framebuffer, y, &fit(&message.title, 46), accent);
+    for (index, line) in message.body.iter().take(5).enumerate() {
+        text(
+            framebuffer,
+            y + 16 + index as i32 * 13,
+            &fit(line, 46),
+            OFF_WHITE,
+        );
+    }
+}
+
+fn section_rule(framebuffer: &mut Framebuffer, y: i32, label: &str, color: Pixel) {
+    framebuffer.draw_text(14, y, label, color);
+    framebuffer.draw_line(14, y + 10, 305, y + 10, DIM);
+}
+
+fn text(framebuffer: &mut Framebuffer, y: i32, value: &str, color: Pixel) {
+    framebuffer.draw_text(14, y, &fit(value, 46), color);
 }
 
 fn terminal_background(framebuffer: &mut Framebuffer) {
@@ -165,6 +280,16 @@ fn draw_center(framebuffer: &mut Framebuffer, y: i32, text: &str, color: Pixel, 
 
 fn fit(text: impl AsRef<str>, max_chars: usize) -> String {
     text.as_ref().chars().take(max_chars).collect()
+}
+
+fn detail_title(detail: DetailId) -> &'static str {
+    match detail {
+        DetailId::ArcadeScores => "ARCADE / CLASSEMENT",
+        DetailId::Mailbox => "MESSAGERIE / MA BOITE",
+        DetailId::ServicePublic => "INFOS / SERVICE PUBLIC",
+        DetailId::GpeProjects => "GPE / PROJETS",
+        DetailId::Node7File => "NOEUD 7 / LE FICHIER",
+    }
 }
 
 fn page_identity(page: PageId) -> (&'static str, &'static str) {

@@ -9,6 +9,15 @@ pub enum PageId {
     Aide,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum DetailId {
+    ArcadeScores,
+    Mailbox,
+    ServicePublic,
+    GpeProjects,
+    Node7File,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NavCommand {
     Digit(u8),
@@ -21,6 +30,7 @@ pub enum NavCommand {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Target {
     Page(PageId),
+    Detail(DetailId),
     Notice(&'static str),
     Summary,
     Quit,
@@ -74,8 +84,8 @@ const ACCUEIL: &[Entry] = &[
 const ARCADE: &[Entry] = &[
     Entry {
         key: 1,
-        label: "GCHO INVADERS",
-        target: Target::Notice("INSERT COIN. AUCUNE PIECE DETECTEE."),
+        label: "CLASSEMENT GCHO",
+        target: Target::Detail(DetailId::ArcadeScores),
     },
     Entry {
         key: 2,
@@ -103,7 +113,7 @@ const MESSAGERIE: &[Entry] = &[
     Entry {
         key: 1,
         label: "MA BOITE",
-        target: Target::Notice("1 NOUVEAU MESSAGE: 'TU ES LA ?' - 14/03/1992"),
+        target: Target::Detail(DetailId::Mailbox),
     },
     Entry {
         key: 2,
@@ -136,7 +146,7 @@ const INFOS: &[Entry] = &[
     Entry {
         key: 2,
         label: "SERVICE PUBLIC",
-        target: Target::Notice("CONSULTEZ LE MESSAGE OFFICIEL CI-DESSOUS."),
+        target: Target::Detail(DetailId::ServicePublic),
     },
     Entry {
         key: 3,
@@ -173,8 +183,8 @@ const GPE: &[Entry] = &[
     },
     Entry {
         key: 3,
-        label: "JEUX",
-        target: Target::Notice("PLUSIEURS MONDES SONT ACCESSIBLES PAR D'AUTRES LIGNES."),
+        label: "PROJETS EN LIGNE",
+        target: Target::Detail(DetailId::GpeProjects),
     },
 ];
 
@@ -182,7 +192,7 @@ const NOEUD7: &[Entry] = &[
     Entry {
         key: 1,
         label: "LE FICHIER",
-        target: Target::Notice("FICHIER 7/7: L'ORIGINE DU SIGNAL EST: ICI."),
+        target: Target::Detail(DetailId::Node7File),
     },
     Entry {
         key: 2,
@@ -220,6 +230,7 @@ const AIDE: &[Entry] = &[Entry {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Service {
     current: PageId,
+    detail: Option<DetailId>,
     pending: Option<u8>,
     history: Vec<PageId>,
     notice: Option<&'static str>,
@@ -236,6 +247,7 @@ impl Service {
     pub fn new() -> Self {
         Self {
             current: PageId::Accueil,
+            detail: None,
             pending: None,
             history: Vec::new(),
             notice: None,
@@ -245,6 +257,10 @@ impl Service {
 
     pub fn current_page(&self) -> PageId {
         self.current
+    }
+
+    pub fn current_detail(&self) -> Option<DetailId> {
+        self.detail
     }
 
     pub fn pending_digit(&self) -> Option<u8> {
@@ -287,6 +303,11 @@ impl Service {
         match command {
             NavCommand::Digit(digit) => {
                 self.notice = None;
+                if self.detail.is_some() {
+                    self.pending = None;
+                    self.notice = Some("UTILISEZ RETOUR POUR QUITTER CET ECRAN.");
+                    return;
+                }
                 self.pending = self
                     .entries()
                     .iter()
@@ -297,6 +318,10 @@ impl Service {
                 }
             }
             NavCommand::Send => {
+                if self.detail.is_some() {
+                    self.notice = Some("AUCUNE COMMANDE A ENVOYER SUR CET ECRAN.");
+                    return;
+                }
                 let Some(digit) = self.pending.take() else {
                     self.notice = Some("SAISISSEZ UN NUMERO AVANT ENVOI.");
                     return;
@@ -319,6 +344,9 @@ impl Service {
             NavCommand::Return => {
                 self.pending = None;
                 self.notice = None;
+                if self.detail.take().is_some() {
+                    return;
+                }
                 self.current = self.history.pop().unwrap_or(PageId::Accueil);
             }
             NavCommand::Summary => self.go_summary(),
@@ -329,11 +357,13 @@ impl Service {
         self.notice = None;
         match target {
             Target::Page(page) => {
+                self.detail = None;
                 if page != self.current {
                     self.history.push(self.current);
                     self.current = page;
                 }
             }
+            Target::Detail(detail) => self.detail = Some(detail),
             Target::Notice(message) => self.notice = Some(message),
             Target::Summary => self.go_summary(),
             Target::Quit => self.exit_requested = true,
@@ -343,6 +373,7 @@ impl Service {
     fn go_summary(&mut self) {
         self.pending = None;
         self.notice = None;
+        self.detail = None;
         self.history.clear();
         self.current = PageId::Accueil;
     }

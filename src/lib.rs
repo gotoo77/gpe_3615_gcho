@@ -5,7 +5,7 @@ mod service;
 
 pub use app::GchoApp;
 pub use content::{ContentBundle, ContentFile, EditorialMessage};
-pub use service::{Entry, NavCommand, PageId, Service};
+pub use service::{DetailId, Entry, NavCommand, PageId, Service};
 
 use gotoo_pixel_engine::EngineConfig;
 
