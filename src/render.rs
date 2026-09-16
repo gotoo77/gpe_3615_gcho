@@ -19,7 +19,13 @@ pub fn render_boot(framebuffer: &mut Framebuffer, progress: f32) {
     draw_center(framebuffer, 28, "CONNEXION AU SERVICE", CYAN, 1);
     draw_center(framebuffer, 62, "3615", YELLOW, 2);
     draw_center(framebuffer, 84, "GCHO", CYAN, 2);
-    draw_center(framebuffer, 122, "INITIALISATION DU TERMINAL...", OFF_WHITE, 1);
+    draw_center(
+        framebuffer,
+        122,
+        "INITIALISATION DU TERMINAL...",
+        OFF_WHITE,
+        1,
+    );
 
     let width = 180_u32;
     let filled = (width as f32 * progress.clamp(0.0, 1.0)).round() as u32;
@@ -80,7 +86,12 @@ pub fn render_terminal(
             framebuffer.fill_rect(9, y - 3, 302, 12, CYAN);
         }
         let ink = if selected { BG } else { OFF_WHITE };
-        framebuffer.draw_text(14, y, &format!("{}  {}", entry.key, fit(entry.label, 43)), ink);
+        framebuffer.draw_text(
+            14,
+            y,
+            &format!("{}  {}", entry.key, fit(entry.label, 43)),
+            ink,
+        );
     }
 
     render_page_content(framebuffer, page, content);
@@ -102,8 +113,18 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
         DetailId::ArcadeScores => {
             section_rule(framebuffer, 48, "TABLE DES SCORES", GREEN);
             text(framebuffer, 62, "01  ADMIN ............... 999999", YELLOW);
-            text(framebuffer, 76, "02  XAVIER_92 ........... 042361", OFF_WHITE);
-            text(framebuffer, 90, "03  GUEST ............... 000120", OFF_WHITE);
+            text(
+                framebuffer,
+                76,
+                "02  XAVIER_92 ........... 042361",
+                OFF_WHITE,
+            );
+            text(
+                framebuffer,
+                90,
+                "03  GUEST ............... 000120",
+                OFF_WHITE,
+            );
             text(framebuffer, 116, "CREDITS DISPONIBLES : 00", CYAN);
             text(framebuffer, 132, "POUR JOUER, VEUILLEZ INSERER", OFF_WHITE);
             text(framebuffer, 144, "UNE PIECE DANS VOTRE MINITEL.", OFF_WHITE);
@@ -113,7 +134,12 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
             render_editorial_full(framebuffer, 62, &content.messages, GREEN);
             text(framebuffer, 150, "ETAT : NON LU", YELLOW);
             text(framebuffer, 164, "REPONSE IMPOSSIBLE :", OFF_WHITE);
-            text(framebuffer, 176, "DESTINATAIRE HORS LIGNE DEPUIS 1992.", OFF_WHITE);
+            text(
+                framebuffer,
+                176,
+                "DESTINATAIRE HORS LIGNE DEPUIS 1992.",
+                OFF_WHITE,
+            );
         }
         DetailId::ServicePublic => {
             section_rule(framebuffer, 48, "TRANSMISSION OFFICIELLE", CYAN);
@@ -125,9 +151,24 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
             section_rule(framebuffer, 48, "PROJETS ACCESSIBLES", GREEN);
             text(framebuffer, 62, "GPE .......... MOTEUR PIXEL", CYAN);
             text(framebuffer, 78, "DRUID ........ CANAL FANTOME", OFF_WHITE);
-            text(framebuffer, 94, "VOID ......... TRANSMISSION VERTICALE", OFF_WHITE);
-            text(framebuffer, 110, "SIX-SEVEN .... PROTOCOLE NON DOCUMENTE", OFF_WHITE);
-            text(framebuffer, 138, "STATUT : EN CONSTRUCTION PERMANENTE", GREEN);
+            text(
+                framebuffer,
+                94,
+                "VOID ......... TRANSMISSION VERTICALE",
+                OFF_WHITE,
+            );
+            text(
+                framebuffer,
+                110,
+                "SIX-SEVEN .... PROTOCOLE NON DOCUMENTE",
+                OFF_WHITE,
+            );
+            text(
+                framebuffer,
+                138,
+                "STATUT : EN CONSTRUCTION PERMANENTE",
+                GREEN,
+            );
             text(framebuffer, 154, "CERTAINS SERVICES PEUVENT EXISTER", DIM);
             text(framebuffer, 166, "AVANT LEUR DATE DE CREATION.", DIM);
         }
@@ -167,7 +208,9 @@ fn render_page_content(framebuffer: &mut Framebuffer, page: PageId, content: &Co
 }
 
 fn render_notice(framebuffer: &mut Framebuffer, notice: Option<&str>) {
-    let Some(notice) = notice else { return; };
+    let Some(notice) = notice else {
+        return;
+    };
     framebuffer.fill_rect(9, 184, 302, 26, Pixel::rgb(8, 24, 28));
     framebuffer.draw_rect(9, 184, 302, 26, RED);
     framebuffer.draw_text(14, 190, &fit(notice, 46), YELLOW);
@@ -178,7 +221,9 @@ fn render_notice(framebuffer: &mut Framebuffer, notice: Option<&str>) {
 }
 
 fn render_editorial(framebuffer: &mut Framebuffer, y: i32, file: &ContentFile, accent: Pixel) {
-    let Some(message) = file.messages.first() else { return; };
+    let Some(message) = file.messages.first() else {
+        return;
+    };
     framebuffer.draw_text(14, y, &fit(&message.title, 46), accent);
     for (index, line) in message.body.iter().take(2).enumerate() {
         framebuffer.draw_text(14, y + 12 + index as i32 * 10, &fit(line, 46), OFF_WHITE);
@@ -192,7 +237,12 @@ fn render_editorial_full(framebuffer: &mut Framebuffer, y: i32, file: &ContentFi
     };
     text(framebuffer, y, &fit(&message.title, 46), accent);
     for (index, line) in message.body.iter().take(5).enumerate() {
-        text(framebuffer, y + 16 + index as i32 * 13, &fit(line, 46), OFF_WHITE);
+        text(
+            framebuffer,
+            y + 16 + index as i32 * 13,
+            &fit(line, 46),
+            OFF_WHITE,
+        );
     }
 }
 
@@ -208,7 +258,13 @@ fn text(framebuffer: &mut Framebuffer, y: i32, value: &str, color: Pixel) {
 fn terminal_background(framebuffer: &mut Framebuffer) {
     framebuffer.clear(BG);
     for y in (2..framebuffer.height() as i32).step_by(4) {
-        framebuffer.draw_line(0, y, framebuffer.width() as i32 - 1, y, Pixel::rgb(3, 12, 15));
+        framebuffer.draw_line(
+            0,
+            y,
+            framebuffer.width() as i32 - 1,
+            y,
+            Pixel::rgb(3, 12, 15),
+        );
     }
 }
 
