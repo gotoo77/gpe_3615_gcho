@@ -84,6 +84,10 @@ Le terminal donne maintenant l'impression qu'un service continue de vivre derrie
 
 Tout reste local, deterministe et reproductible.
 
+## MFE-7 — bruit de donnees recues
+
+Pendant une transmission, un cue tres court et discret accompagne chaque **chunk logique de 16 caracteres recus**. Le son n'est pas joue pendant le delai de reponse initial et ne se repete pas entre deux frames tant qu'aucune nouvelle frontiere de chunk n'est franchie. Comme les autres sons GCHO, il est genere localement et deterministiquement, sans asset audio externe.
+
 ## Lancer en natif
 
 ```bash
@@ -149,7 +153,7 @@ Le code reste volontairement petit :
 
 - `src/service.rs` : etat, navigation et sous-ecrans ;
 - `src/content.rs` : parsing et fallbacks editoriaux ;
-- `src/experience.rs` : debit simule, rotation et etat vivant de session ;
+- `src/experience.rs` : debit simule, chunks, rotation et etat vivant de session ;
 - `src/app.rs` : adaptation input GPE + boucle runtime ;
 - `src/render.rs` : rendu Videotex framebuffer-only ;
 - `src/sound.rs` : cues audio locaux ;

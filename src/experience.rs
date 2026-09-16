@@ -11,6 +11,7 @@ const MINITEL_COLUMNS: usize = 40;
 const CELL_HEIGHT: usize = 10;
 const BANNER_PERIOD_SECONDS: f32 = 8.0;
 const STATUS_PERIOD_SECONDS: f32 = 12.0;
+pub const DATA_CHUNK_CHARACTERS: usize = 16;
 const LIVE_STATUSES: &[&str] = &[
     "RESEAU GCHO : OUVERT",
     "1 NOUVEAU MESSAGE",
@@ -62,6 +63,18 @@ impl TerminalTiming {
         let transmit_seconds = elapsed_seconds - response_delay;
         (transmit_seconds * self.characters_per_second() as f32).floor() as usize
     }
+}
+
+pub fn data_chunks_crossed(
+    previous_visible: usize,
+    current_visible: usize,
+    chunk_characters: usize,
+) -> usize {
+    if chunk_characters == 0 || current_visible <= previous_visible {
+        return 0;
+    }
+
+    (current_visible / chunk_characters).saturating_sub(previous_visible / chunk_characters)
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]

@@ -2,8 +2,8 @@ use gotoo_pixel_engine::{Audio, Frame, Game, GameResult, Key, MouseButton, TextI
 
 use crate::content::ContentBundle;
 use crate::experience::{
-    LiveServicePulse, TerminalTiming, render_live_status, render_public_service_banner,
-    render_transmission_mask,
+    DATA_CHUNK_CHARACTERS, LiveServicePulse, TerminalTiming, data_chunks_crossed,
+    render_live_status, render_public_service_banner, render_transmission_mask,
 };
 use crate::facade::{FunctionKey, function_key_at};
 use crate::render::{render_boot, render_terminal};
@@ -21,6 +21,7 @@ pub struct GchoApp {
     boot_elapsed: f32,
     blink_elapsed: f32,
     transmission_elapsed: f32,
+    last_visible_characters: usize,
     audio_registration_attempted: bool,
     boot_cue_attempted: bool,
     active_function_key: Option<FunctionKey>,
@@ -47,6 +48,7 @@ impl GchoApp {
             boot_elapsed: 0.0,
             blink_elapsed: 0.0,
             transmission_elapsed: 0.0,
+            last_visible_characters: 0,
             audio_registration_attempted: false,
             boot_cue_attempted: false,
             active_function_key: None,
@@ -65,6 +67,7 @@ impl GchoApp {
         let current_view = (self.service.current_page(), self.service.current_detail());
         if current_view != previous_view {
             self.transmission_elapsed = 0.0;
+            self.last_visible_characters = 0;
         }
 
         let cue = if self.service.notice().is_some() {
@@ -172,6 +175,17 @@ impl Game for GchoApp {
             return GameResult::Exit;
         }
 
+        let visible_characters = self.timing.visible_characters(self.transmission_elapsed);
+        let chunks_crossed = data_chunks_crossed(
+            self.last_visible_characters,
+            visible_characters,
+            DATA_CHUNK_CHARACTERS,
+        );
+        for _ in 0..chunks_crossed {
+            let _ = play_retro_cue(frame.audio, RetroCue::DataChunk);
+        }
+        self.last_visible_characters = visible_characters;
+
         render_terminal(
             frame.framebuffer,
             &self.service,
@@ -189,10 +203,7 @@ impl Game for GchoApp {
                 .and_then(|index| self.content.service_public.messages.get(index));
             render_public_service_banner(frame.framebuffer, message);
         }
-        render_transmission_mask(
-            frame.framebuffer,
-            self.timing.visible_characters(self.transmission_elapsed),
-        );
+        render_transmission_mask(frame.framebuffer, visible_characters);
         render_live_status(
             frame.framebuffer,
             self.live_pulse.status(),

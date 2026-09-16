@@ -8,6 +8,7 @@ const KEY_SOUND: SoundId = SoundId::new("gcho.key");
 const SEND_SOUND: SoundId = SoundId::new("gcho.send");
 const ERROR_SOUND: SoundId = SoundId::new("gcho.error");
 const NAVIGATE_SOUND: SoundId = SoundId::new("gcho.navigate");
+const DATA_CHUNK_SOUND: SoundId = SoundId::new("gcho.data-chunk");
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum RetroCue {
@@ -16,6 +17,7 @@ pub enum RetroCue {
     Send,
     Error,
     Navigate,
+    DataChunk,
 }
 
 impl RetroCue {
@@ -26,13 +28,14 @@ impl RetroCue {
             Self::Send => SEND_SOUND,
             Self::Error => ERROR_SOUND,
             Self::Navigate => NAVIGATE_SOUND,
+            Self::DataChunk => DATA_CHUNK_SOUND,
         }
     }
 
     const fn bus(self) -> AudioBus {
         match self {
             Self::Boot => AudioBus::Sfx,
-            Self::Key | Self::Send | Self::Error | Self::Navigate => AudioBus::Ui,
+            Self::Key | Self::Send | Self::Error | Self::Navigate | Self::DataChunk => AudioBus::Ui,
         }
     }
 }
@@ -44,6 +47,7 @@ pub fn register_retro_audio(audio: &mut dyn Audio) -> Result<(), AudioError> {
         (SEND_SOUND, send_samples()),
         (ERROR_SOUND, error_samples()),
         (NAVIGATE_SOUND, navigate_samples()),
+        (DATA_CHUNK_SOUND, data_chunk_samples()),
     ] {
         let wav = pcm16_mono_wav(SAMPLE_RATE, &samples)?;
         audio.register_wav(id, &wav)?;
@@ -111,6 +115,13 @@ fn error_samples() -> Vec<i16> {
 fn navigate_samples() -> Vec<i16> {
     let mut samples = Vec::new();
     append_sweep(&mut samples, 82, 620.0, 980.0, 0.13);
+    samples
+}
+
+fn data_chunk_samples() -> Vec<i16> {
+    let mut samples = Vec::new();
+    append_noise_carrier(&mut samples, 18, 1_850.0, 0.045, 0x3615_DA7A);
+    append_tone(&mut samples, 9, &[(2_450.0, 1.0)], 0.025);
     samples
 }
 
