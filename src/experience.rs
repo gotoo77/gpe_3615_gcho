@@ -61,8 +61,18 @@ pub(crate) fn render_public_service_banner(framebuffer: &mut Framebuffer) {
     framebuffer.fill_rect(9, 166, 302, 43, Pixel::rgb(8, 24, 28));
     framebuffer.draw_rect(9, 166, 302, 43, TERMINAL_YELLOW);
     framebuffer.draw_text(14, 171, "MESSAGE DE SERVICE PUBLIC", TERMINAL_YELLOW);
-    framebuffer.draw_text(14, 184, "DITES-NOUS DE QUOI VOUS AVEZ BESOIN.", TERMINAL_OFF_WHITE);
-    framebuffer.draw_text(14, 196, "NOUS VOUS DIRONS COMMENT VOUS EN PASSER.", TERMINAL_DIM);
+    framebuffer.draw_text(
+        14,
+        184,
+        "DITES-NOUS DE QUOI VOUS AVEZ BESOIN.",
+        TERMINAL_OFF_WHITE,
+    );
+    framebuffer.draw_text(
+        14,
+        196,
+        "NOUS VOUS DIRONS COMMENT VOUS EN PASSER.",
+        TERMINAL_DIM,
+    );
 }
 
 pub(crate) fn render_transmission_mask(framebuffer: &mut Framebuffer, visible_characters: usize) {
