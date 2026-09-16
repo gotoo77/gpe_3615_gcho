@@ -14,6 +14,10 @@ const RED: Pixel = Pixel::rgb(245, 85, 75);
 const YELLOW: Pixel = Pixel::rgb(245, 215, 70);
 const PINK: Pixel = Pixel::rgb(245, 105, 185);
 
+pub const NOTICE_TOP_Y: i32 = 172;
+pub const NOTICE_HEIGHT: u32 = 26;
+pub const NODE7_FILE_FINAL_Y: i32 = 188;
+
 pub fn choice_prompt_y(page: PageId) -> Option<i32> {
     (page != PageId::Accueil).then_some(184)
 }
@@ -239,7 +243,12 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
             text(framebuffer, 148, "ORIGINE DU SIGNAL : ICI", YELLOW);
             text(framebuffer, 164, "DATE D'OUVERTURE : 00/00/0000", OFF_WHITE);
             text(framebuffer, 180, "DATE DE FERMETURE : EN COURS", OFF_WHITE);
-            text(framebuffer, 198, "NE DECONNECTEZ PAS LE TERMINAL.", RED);
+            text(
+                framebuffer,
+                NODE7_FILE_FINAL_Y,
+                "NE DECONNECTEZ PAS LE TERMINAL.",
+                RED,
+            );
         }
         DetailId::Node7Witnesses => {
             section_rule(framebuffer, 48, "DEPOSITIONS ARCHIVEES", RED);
@@ -309,12 +318,12 @@ fn render_notice(framebuffer: &mut Framebuffer, notice: Option<&str>) {
     let Some(notice) = notice else {
         return;
     };
-    framebuffer.fill_rect(9, 184, 302, 26, Pixel::rgb(8, 24, 28));
-    framebuffer.draw_rect(9, 184, 302, 26, RED);
-    framebuffer.draw_text(14, 190, &fit(notice, 46), YELLOW);
+    framebuffer.fill_rect(9, NOTICE_TOP_Y, 302, NOTICE_HEIGHT, Pixel::rgb(8, 24, 28));
+    framebuffer.draw_rect(9, NOTICE_TOP_Y, 302, NOTICE_HEIGHT, RED);
+    framebuffer.draw_text(14, NOTICE_TOP_Y + 6, &fit(notice, 46), YELLOW);
     if notice.chars().count() > 46 {
         let rest: String = notice.chars().skip(46).collect();
-        framebuffer.draw_text(14, 200, &fit(rest.trim_start(), 46), YELLOW);
+        framebuffer.draw_text(14, NOTICE_TOP_Y + 16, &fit(rest.trim_start(), 46), YELLOW);
     }
 }
 

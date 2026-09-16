@@ -15,6 +15,7 @@ const STATUS_PERIOD_SECONDS: f32 = 12.0;
 pub const DATA_CHUNK_CHARACTERS: usize = 16;
 pub const TERMINAL_VISIBLE_CHARACTERS: usize = MINITEL_COLUMNS * MINITEL_ROWS;
 pub const LIVE_STATUS_TOP_Y: i32 = 200;
+pub const LIVE_STATUS_HEIGHT: i32 = 10;
 const LIVE_STATUSES: &[&str] = &[
     "RESEAU GCHO : OUVERT",
     "1 NOUVEAU MESSAGE",
@@ -175,7 +176,13 @@ pub(crate) fn render_live_status(
     status: &str,
     selection: Option<u8>,
 ) {
-    framebuffer.fill_rect(9, LIVE_STATUS_TOP_Y, 302, 10, Pixel::rgb(5, 16, 20));
+    framebuffer.fill_rect(
+        9,
+        LIVE_STATUS_TOP_Y,
+        302,
+        LIVE_STATUS_HEIGHT as u32,
+        Pixel::rgb(5, 16, 20),
+    );
     framebuffer.draw_line(9, LIVE_STATUS_TOP_Y, 310, LIVE_STATUS_TOP_Y, TERMINAL_DIM);
     let label = if selection.is_some() {
         selection_hint(selection)

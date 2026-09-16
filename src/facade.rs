@@ -31,12 +31,14 @@ pub struct FunctionKeySpec {
     pub height: i32,
 }
 
+pub const FUNCTION_KEYS_TOP_Y: i32 = 212;
+
 const FUNCTION_KEYS: &[FunctionKeySpec] = &[
     FunctionKeySpec {
         key: FunctionKey::Summary,
         label: "SOMMAIRE",
         x: 7,
-        y: 212,
+        y: FUNCTION_KEYS_TOP_Y,
         width: 61,
         height: 21,
     },
@@ -44,7 +46,7 @@ const FUNCTION_KEYS: &[FunctionKeySpec] = &[
         key: FunctionKey::Return,
         label: "RETOUR",
         x: 71,
-        y: 212,
+        y: FUNCTION_KEYS_TOP_Y,
         width: 48,
         height: 21,
     },
@@ -52,7 +54,7 @@ const FUNCTION_KEYS: &[FunctionKeySpec] = &[
         key: FunctionKey::Correction,
         label: "CORRECT.",
         x: 122,
-        y: 212,
+        y: FUNCTION_KEYS_TOP_Y,
         width: 73,
         height: 21,
     },
@@ -60,7 +62,7 @@ const FUNCTION_KEYS: &[FunctionKeySpec] = &[
         key: FunctionKey::Guide,
         label: "GUIDE",
         x: 198,
-        y: 212,
+        y: FUNCTION_KEYS_TOP_Y,
         width: 48,
         height: 21,
     },
@@ -68,7 +70,7 @@ const FUNCTION_KEYS: &[FunctionKeySpec] = &[
         key: FunctionKey::Send,
         label: "ENVOI",
         x: 249,
-        y: 212,
+        y: FUNCTION_KEYS_TOP_Y,
         width: 64,
         height: 21,
     },
