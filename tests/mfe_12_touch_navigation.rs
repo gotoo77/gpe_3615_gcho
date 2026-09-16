@@ -38,10 +38,7 @@ fn tapping_an_entry_selects_it_then_a_second_tap_activates_it() {
         Some(NavCommand::Digit(2))
     );
     service.apply(NavCommand::Digit(2));
-    assert_eq!(
-        menu_tap_command(&service, 120, 110),
-        Some(NavCommand::Send)
-    );
+    assert_eq!(menu_tap_command(&service, 120, 110), Some(NavCommand::Send));
 }
 
 #[test]
