@@ -2,7 +2,7 @@
 <html lang="fr">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="color-scheme" content="dark">
     <title>3615 GCHO</title>
     <style>
@@ -14,14 +14,16 @@
         background: #000;
       }
       body {
+        height: 100vh;
+        height: 100dvh;
         display: grid;
         place-items: center;
       }
       canvas {
         display: block;
-        width: min(100vw, 960px);
+        width: min(100vw, calc(100vh * 4 / 3), 960px);
+        width: min(100vw, calc(100dvh * 4 / 3), 960px);
         height: auto;
-        max-height: 100vh;
         aspect-ratio: 4 / 3;
         image-rendering: pixelated;
         touch-action: none;
@@ -41,11 +43,19 @@
     <pre id="fatal"></pre>
     <script type="module">
       import init from "./pkg/gcho-web.js";
+
+      const CONTROL_FLOW_EXCEPTION = "Using exceptions for control flow";
+
       init().catch((error) => {
-        const fatal = document.getElementById("fatal");
-        fatal.style.display = "block";
-        fatal.textContent = `ERREUR TERMINAL\n${error}`;
-        console.error(error);
+        const message = error instanceof Error ? error.message : String(error);
+        const isControlFlowException = message.startsWith(CONTROL_FLOW_EXCEPTION);
+
+        if (!isControlFlowException) {
+          const fatal = document.getElementById("fatal");
+          fatal.style.display = "block";
+          fatal.textContent = `ERREUR TERMINAL\n${message}`;
+          console.error(error);
+        }
       });
     </script>
   </body>
