@@ -1,5 +1,6 @@
-use gotoo_pixel_engine::{Audio, Frame, Game, GameResult, Key, MouseButton, TextInputEvent};
+use gotoo_pixel_engine::{Audio, Frame, Game, GameResult, Image, Key, MouseButton, TextInputEvent};
 
+use crate::branding::{decode_minitel_logo, render_accueil_branding};
 use crate::content::ContentBundle;
 use crate::experience::{
     DATA_CHUNK_CHARACTERS, LiveServicePulse, TERMINAL_VISIBLE_CHARACTERS, TerminalTiming,
@@ -17,6 +18,7 @@ const FUNCTION_KEY_FLASH_SECONDS: f32 = 0.13;
 pub struct GchoApp {
     service: Service,
     content: ContentBundle,
+    minitel_logo: Image,
     timing: TerminalTiming,
     live_pulse: LiveServicePulse,
     boot_elapsed: f32,
@@ -44,6 +46,8 @@ impl GchoApp {
         Self {
             service: Service::new(),
             content: ContentBundle::load_bundled(),
+            minitel_logo: decode_minitel_logo()
+                .expect("bundled 3615 GCHO Minitel logo must decode"),
             timing,
             live_pulse: LiveServicePulse::new(),
             boot_elapsed: 0.0,
@@ -195,6 +199,10 @@ impl Game for GchoApp {
             self.blink_elapsed < 0.55,
             self.active_function_key,
         );
+        if self.service.current_page() == PageId::Accueil && self.service.current_detail().is_none()
+        {
+            render_accueil_branding(frame.framebuffer, &self.service, &self.minitel_logo);
+        }
         if self.service.current_page() == PageId::Accueil
             && self.service.current_detail().is_none()
             && self.service.notice().is_none()
