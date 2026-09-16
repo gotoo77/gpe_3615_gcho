@@ -3,13 +3,23 @@ use gpe_3615_gcho::{RetroCue, data_chunks_crossed, play_retro_cue, register_retr
 
 #[test]
 fn chunk_crossing_counts_exact_boundaries_without_frame_spam() {
-    assert_eq!(data_chunks_crossed(0, 0, 16), 0);
-    assert_eq!(data_chunks_crossed(0, 15, 16), 0);
-    assert_eq!(data_chunks_crossed(15, 16, 16), 1);
-    assert_eq!(data_chunks_crossed(16, 31, 16), 0);
-    assert_eq!(data_chunks_crossed(16, 32, 16), 1);
-    assert_eq!(data_chunks_crossed(0, 48, 16), 3);
-    assert_eq!(data_chunks_crossed(48, 16, 16), 0);
+    let screen_capacity = 960;
+    assert_eq!(data_chunks_crossed(0, 0, 16, screen_capacity), 0);
+    assert_eq!(data_chunks_crossed(0, 15, 16, screen_capacity), 0);
+    assert_eq!(data_chunks_crossed(15, 16, 16, screen_capacity), 1);
+    assert_eq!(data_chunks_crossed(16, 31, 16, screen_capacity), 0);
+    assert_eq!(data_chunks_crossed(16, 32, 16, screen_capacity), 1);
+    assert_eq!(data_chunks_crossed(0, 48, 16, screen_capacity), 3);
+    assert_eq!(data_chunks_crossed(48, 16, 16, screen_capacity), 0);
+}
+
+#[test]
+fn chunk_audio_stops_once_the_screen_is_fully_revealed() {
+    let screen_capacity = 960;
+    assert_eq!(data_chunks_crossed(944, 960, 16, screen_capacity), 1);
+    assert_eq!(data_chunks_crossed(960, 976, 16, screen_capacity), 0);
+    assert_eq!(data_chunks_crossed(960, 10_000, 16, screen_capacity), 0);
+    assert_eq!(data_chunks_crossed(944, 10_000, 16, screen_capacity), 1);
 }
 
 #[derive(Default)]

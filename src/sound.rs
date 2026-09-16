@@ -120,8 +120,8 @@ fn navigate_samples() -> Vec<i16> {
 
 fn data_chunk_samples() -> Vec<i16> {
     let mut samples = Vec::new();
-    append_noise_carrier(&mut samples, 18, 1_850.0, 0.045, 0x3615_DA7A);
-    append_tone(&mut samples, 9, &[(2_450.0, 1.0)], 0.025);
+    append_noise_carrier(&mut samples, 18, 1_850.0, 0.015, 0x3615_DA7A);
+    append_tone(&mut samples, 9, &[(2_450.0, 1.0)], 0.008);
     samples
 }
 

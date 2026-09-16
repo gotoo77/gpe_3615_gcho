@@ -8,10 +8,12 @@ const TERMINAL_OFF_WHITE: Pixel = Pixel::rgb(225, 232, 218);
 const TERMINAL_CYAN: Pixel = Pixel::rgb(50, 220, 225);
 const TERMINAL_YELLOW: Pixel = Pixel::rgb(245, 215, 70);
 const MINITEL_COLUMNS: usize = 40;
+const MINITEL_ROWS: usize = 24;
 const CELL_HEIGHT: usize = 10;
 const BANNER_PERIOD_SECONDS: f32 = 8.0;
 const STATUS_PERIOD_SECONDS: f32 = 12.0;
 pub const DATA_CHUNK_CHARACTERS: usize = 16;
+pub const TERMINAL_VISIBLE_CHARACTERS: usize = MINITEL_COLUMNS * MINITEL_ROWS;
 const LIVE_STATUSES: &[&str] = &[
     "RESEAU GCHO : OUVERT",
     "1 NOUVEAU MESSAGE",
@@ -69,8 +71,15 @@ pub fn data_chunks_crossed(
     previous_visible: usize,
     current_visible: usize,
     chunk_characters: usize,
+    visible_capacity: usize,
 ) -> usize {
-    if chunk_characters == 0 || current_visible <= previous_visible {
+    if chunk_characters == 0 || visible_capacity == 0 {
+        return 0;
+    }
+
+    let previous_visible = previous_visible.min(visible_capacity);
+    let current_visible = current_visible.min(visible_capacity);
+    if current_visible <= previous_visible {
         return 0;
     }
 
