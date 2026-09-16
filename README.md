@@ -10,6 +10,18 @@ Le premier jalon contient une courte sequence de connexion puis sept pages : `AC
 
 Le contenu editorial est volontairement separe du Rust dans `content/*.json`. Le runtime embarque ces snapshots au build et possede en plus des fallbacks internes afin qu'un snapshot invalide ne rende pas le service inutilisable.
 
+## MFE-1 — profondeur de service
+
+La seconde tranche remplace plusieurs reponses d'une ligne par de vrais sous-ecrans Videotex :
+
+- `ARCADE / CLASSEMENT` ;
+- `MESSAGERIE / MA BOITE` ;
+- `INFOS / SERVICE PUBLIC` ;
+- `GPE / PROJETS` ;
+- `NOEUD 7 / LE FICHIER`.
+
+Ces ecrans restent volontairement game-local : un simple `DetailId` complete l'etat existant, sans router generique ni framework de pages. `RETOUR` ferme d'abord le sous-ecran et revient au service parent ; un second `RETOUR` remonte ensuite dans l'historique. `SOMMAIRE` efface tout et retourne a l'accueil.
+
 ## Lancer en natif
 
 ```bash
@@ -56,7 +68,7 @@ python3 tools/generate_content.py --check
 
 L'ecriture passe par un fichier temporaire puis `os.replace`, donc une erreur avant le remplacement conserve le dernier snapshot valide. Lors du workflow Pages quotidien, une erreur de regeneration produit un avertissement mais le snapshot versionne est ensuite valide et utilise.
 
-Aucune API tierce n'est requise au runtime ou au build MFE-0.
+Aucune API tierce n'est requise au runtime ou au build des deux premieres tranches.
 
 ## GitHub Pages
 
@@ -67,19 +79,20 @@ Aucune API tierce n'est requise au runtime ou au build MFE-0.
 3. compile `gcho-web` en WASM ;
 4. genere le glue JavaScript avec `wasm-bindgen` ;
 5. assemble `dist/` ;
-6. publie l'artifact Pages.
+6. configure ou initialise le site GitHub Pages avec GitHub Actions ;
+7. publie l'artifact Pages.
 
-Le workflow se declenche sur `main`, manuellement, et chaque jour a `04:23 UTC`. Selon les reglages du depot/compte, GitHub Pages peut encore devoir etre active avec **Source: GitHub Actions**.
+Le workflow se declenche sur `main`, manuellement, et chaque jour a `04:23 UTC`. Le premier deploiement tente d'activer Pages automatiquement via `actions/configure-pages` ; la disponibilite finale reste soumise aux capacites Pages du compte et du depot GitHub.
 
-## Limites MFE-0
+## Limites actuelles
 
-Pas de vrai protocole Minitel, modem, compte, chat, backend, base de donnees, CMS, analytics, publicite, scraper generique ou contenu LLM live. Les sous-services ARCADE/MESSAGERIE sont des simulations textuelles, pas des applications completes.
+Pas de vrai protocole Minitel, modem, compte, chat, backend, base de donnees, CMS, analytics, publicite, scraper generique ou contenu LLM live. Les services restent des simulations textuelles volontairement petites.
 
 ## Architecture
 
 Le code reste volontairement petit :
 
-- `src/service.rs` : etat et navigation ;
+- `src/service.rs` : etat, navigation et sous-ecrans ;
 - `src/content.rs` : parsing et fallbacks editoriaux ;
 - `src/app.rs` : adaptation input GPE + boucle runtime ;
 - `src/render.rs` : rendu Videotex framebuffer-only ;
