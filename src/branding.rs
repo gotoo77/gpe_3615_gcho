@@ -90,8 +90,7 @@ pub(crate) fn render_accueil_branding(
 
     for (index, entry) in service.entries().iter().enumerate() {
         let y = ACCUEIL_MENU_START_Y + index as i32 * ACCUEIL_MENU_STEP;
-        let selected = service.pending_digit() == Some(entry.key);
-        if selected {
+        if service.pending_digit() == Some(entry.key) {
             framebuffer.fill_rect(
                 ACCUEIL_MENU_LEFT_X,
                 y - 2,
@@ -100,12 +99,11 @@ pub(crate) fn render_accueil_branding(
                 BLUE,
             );
         }
-        let ink = if selected { OFF_WHITE } else { OFF_WHITE };
         framebuffer.draw_text(
             ACCUEIL_MENU_LEFT_X + 5,
             y,
             &format!("{} {}", entry.key, fit(entry.label, 31)),
-            ink,
+            OFF_WHITE,
         );
     }
 
