@@ -1,6 +1,4 @@
-use gpe_3615_gcho::{
-    FunctionKey, NavCommand, PageId, Service, function_key_at, function_keys,
-};
+use gpe_3615_gcho::{FunctionKey, NavCommand, PageId, Service, function_key_at, function_keys};
 
 #[test]
 fn minitel_function_keys_are_visible_and_hit_testable() {
