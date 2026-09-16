@@ -28,7 +28,10 @@ fn normal_service_rows_are_touchable_at_their_rendered_positions() {
 fn tapping_an_entry_selects_it_then_a_second_tap_activates_it() {
     let mut service = Service::new();
 
-    assert_eq!(menu_tap_command(&service, 20, 101), Some(NavCommand::Digit(2)));
+    assert_eq!(
+        menu_tap_command(&service, 20, 101),
+        Some(NavCommand::Digit(2))
+    );
     service.apply(NavCommand::Digit(2));
     assert_eq!(menu_tap_command(&service, 20, 101), Some(NavCommand::Send));
 }
