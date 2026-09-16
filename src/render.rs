@@ -313,13 +313,7 @@ fn render_function_keys(framebuffer: &mut Framebuffer, active: Option<FunctionKe
             spec.height as u32,
             Pixel::rgb(1, 4, 5),
         );
-        framebuffer.fill_rect(
-            spec.x,
-            spec.y,
-            spec.width as u32,
-            spec.height as u32,
-            face,
-        );
+        framebuffer.fill_rect(spec.x, spec.y, spec.width as u32, spec.height as u32, face);
         framebuffer.draw_rect(
             spec.x,
             spec.y,
