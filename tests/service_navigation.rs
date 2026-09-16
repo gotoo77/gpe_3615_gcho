@@ -5,6 +5,7 @@ fn required_pages_are_available() {
     let pages = Service::available_pages();
     for expected in [
         PageId::Accueil,
+        PageId::Services,
         PageId::Arcade,
         PageId::Messagerie,
         PageId::Infos,
@@ -19,6 +20,9 @@ fn required_pages_are_available() {
 #[test]
 fn digit_then_send_opens_requested_service() {
     let mut service = Service::new();
+    open_page(&mut service, 6);
+    assert_eq!(service.current_page(), PageId::Services);
+
     service.apply(NavCommand::Digit(3));
     assert_eq!(service.pending_digit(), Some(3));
     service.apply(NavCommand::Send);
@@ -38,15 +42,15 @@ fn correction_clears_pending_selection() {
 #[test]
 fn return_and_summary_follow_minitel_navigation() {
     let mut service = Service::new();
-    service.apply(NavCommand::Digit(1));
-    service.apply(NavCommand::Send);
+    open_legacy_page(&mut service, 1);
     assert_eq!(service.current_page(), PageId::Arcade);
 
     service.apply(NavCommand::Return);
+    assert_eq!(service.current_page(), PageId::Services);
+    service.apply(NavCommand::Return);
     assert_eq!(service.current_page(), PageId::Accueil);
 
-    service.apply(NavCommand::Digit(5));
-    service.apply(NavCommand::Send);
+    open_legacy_page(&mut service, 5);
     assert_eq!(service.current_page(), PageId::Noeud7);
     service.apply(NavCommand::Summary);
     assert_eq!(service.current_page(), PageId::Accueil);
@@ -57,21 +61,27 @@ fn open_page(service: &mut Service, digit: u8) {
     service.apply(NavCommand::Send);
 }
 
+fn open_legacy_page(service: &mut Service, digit: u8) {
+    open_page(service, 6);
+    assert_eq!(service.current_page(), PageId::Services);
+    open_page(service, digit);
+}
+
 #[test]
 fn key_services_open_real_detail_screens() {
     let mut service = Service::new();
 
-    open_page(&mut service, 1);
+    open_legacy_page(&mut service, 1);
     open_page(&mut service, 1);
     assert_eq!(service.current_detail(), Some(DetailId::ArcadeScores));
 
     service.apply(NavCommand::Summary);
-    open_page(&mut service, 2);
+    open_legacy_page(&mut service, 2);
     open_page(&mut service, 1);
     assert_eq!(service.current_detail(), Some(DetailId::Mailbox));
 
     service.apply(NavCommand::Summary);
-    open_page(&mut service, 3);
+    open_legacy_page(&mut service, 3);
     open_page(&mut service, 1);
     assert_eq!(service.current_detail(), Some(DetailId::News));
 
@@ -80,12 +90,12 @@ fn key_services_open_real_detail_screens() {
     assert_eq!(service.current_detail(), Some(DetailId::ServicePublic));
 
     service.apply(NavCommand::Summary);
-    open_page(&mut service, 4);
+    open_legacy_page(&mut service, 4);
     open_page(&mut service, 3);
     assert_eq!(service.current_detail(), Some(DetailId::GpeProjects));
 
     service.apply(NavCommand::Summary);
-    open_page(&mut service, 5);
+    open_legacy_page(&mut service, 5);
     open_page(&mut service, 1);
     assert_eq!(service.current_detail(), Some(DetailId::Node7File));
 }
@@ -93,7 +103,7 @@ fn key_services_open_real_detail_screens() {
 #[test]
 fn return_closes_detail_before_leaving_its_service_page() {
     let mut service = Service::new();
-    open_page(&mut service, 3);
+    open_legacy_page(&mut service, 3);
     open_page(&mut service, 2);
     assert_eq!(service.current_page(), PageId::Infos);
     assert_eq!(service.current_detail(), Some(DetailId::ServicePublic));
@@ -103,13 +113,15 @@ fn return_closes_detail_before_leaving_its_service_page() {
     assert_eq!(service.current_detail(), None);
 
     service.apply(NavCommand::Return);
+    assert_eq!(service.current_page(), PageId::Services);
+    service.apply(NavCommand::Return);
     assert_eq!(service.current_page(), PageId::Accueil);
 }
 
 #[test]
 fn summary_clears_detail_state() {
     let mut service = Service::new();
-    open_page(&mut service, 5);
+    open_legacy_page(&mut service, 5);
     open_page(&mut service, 1);
     assert_eq!(service.current_detail(), Some(DetailId::Node7File));
 
@@ -124,7 +136,7 @@ fn mfe3_selected_entries_open_detail_screens_instead_of_notices() {
 
     for (service_key, entry_key) in cases {
         let mut service = Service::new();
-        open_page(&mut service, service_key);
+        open_legacy_page(&mut service, service_key);
         open_page(&mut service, entry_key);
 
         assert!(
