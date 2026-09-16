@@ -12,11 +12,15 @@ pub enum PageId {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DetailId {
     ArcadeScores,
+    PixelMaze,
     Mailbox,
+    ChatRooms,
     News,
     ServicePublic,
+    Alerts,
     GpeProjects,
     Node7File,
+    Node7Witnesses,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -91,7 +95,7 @@ const ARCADE: &[Entry] = &[
     Entry {
         key: 2,
         label: "PIXEL MAZE",
-        target: Target::Notice("LABYRINTHE EN MAINTENANCE DEPUIS 1987."),
+        target: Target::Detail(DetailId::PixelMaze),
     },
     Entry {
         key: 3,
@@ -119,7 +123,7 @@ const MESSAGERIE: &[Entry] = &[
     Entry {
         key: 2,
         label: "SALONS",
-        target: Target::Notice("SALON #GENERAL: 3 CONNECTES, 11 FANTOMES."),
+        target: Target::Detail(DetailId::ChatRooms),
     },
     Entry {
         key: 3,
@@ -152,7 +156,7 @@ const INFOS: &[Entry] = &[
     Entry {
         key: 3,
         label: "ALERTES",
-        target: Target::Notice("NIVEAU D'ALERTE: ADMINISTRATIVEMENT VIGILANT."),
+        target: Target::Detail(DetailId::Alerts),
     },
     Entry {
         key: 4,
@@ -198,7 +202,7 @@ const NOEUD7: &[Entry] = &[
     Entry {
         key: 2,
         label: "LES TEMOINS",
-        target: Target::Notice("LES TEMOINS N'ONT RIEN VU. ILS CONFIRMENT TOUS."),
+        target: Target::Detail(DetailId::Node7Witnesses),
     },
     Entry {
         key: 3,
