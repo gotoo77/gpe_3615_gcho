@@ -1,7 +1,10 @@
 use gotoo_pixel_engine::{Audio, Frame, Game, GameResult, Key, MouseButton, TextInputEvent};
 
 use crate::content::ContentBundle;
-use crate::experience::{TerminalTiming, render_public_service_banner, render_transmission_mask};
+use crate::experience::{
+    LiveServicePulse, TerminalTiming, render_live_status, render_public_service_banner,
+    render_transmission_mask,
+};
 use crate::facade::{FunctionKey, function_key_at};
 use crate::render::{render_boot, render_terminal};
 use crate::service::{NavCommand, PageId, Service};
@@ -14,6 +17,7 @@ pub struct GchoApp {
     service: Service,
     content: ContentBundle,
     timing: TerminalTiming,
+    live_pulse: LiveServicePulse,
     boot_elapsed: f32,
     blink_elapsed: f32,
     transmission_elapsed: f32,
@@ -39,6 +43,7 @@ impl GchoApp {
             service: Service::new(),
             content: ContentBundle::load_bundled(),
             timing,
+            live_pulse: LiveServicePulse::new(),
             boot_elapsed: 0.0,
             blink_elapsed: 0.0,
             transmission_elapsed: 0.0,
@@ -114,6 +119,7 @@ impl Game for GchoApp {
         }
 
         self.transmission_elapsed += dt;
+        self.live_pulse.advance(dt);
 
         let mut commands = Vec::new();
         for event in frame.input.text_events() {
@@ -177,11 +183,20 @@ impl Game for GchoApp {
             && self.service.current_detail().is_none()
             && self.service.notice().is_none()
         {
-            render_public_service_banner(frame.framebuffer);
+            let message = self
+                .live_pulse
+                .banner_index(self.content.service_public.messages.len())
+                .and_then(|index| self.content.service_public.messages.get(index));
+            render_public_service_banner(frame.framebuffer, message);
         }
         render_transmission_mask(
             frame.framebuffer,
             self.timing.visible_characters(self.transmission_elapsed),
+        );
+        render_live_status(
+            frame.framebuffer,
+            self.live_pulse.status(),
+            self.service.pending_digit(),
         );
         GameResult::Continue
     }
