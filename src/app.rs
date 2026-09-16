@@ -281,7 +281,7 @@ impl Game for GchoApp {
         {
             render_accueil_branding(frame.framebuffer, &self.service, &self.minitel_logo);
         }
-        if self.service.current_page() == PageId::Accueil
+        if self.service.current_page() == PageId::Services
             && self.service.current_detail().is_none()
             && self.service.notice().is_none()
         {
