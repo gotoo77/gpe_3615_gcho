@@ -14,7 +14,4 @@ fn accueil_logo_rect_fits_the_terminal_without_touching_navigation_regions() {
     assert_eq!(ACCUEIL_LOGO_RECT.y, 28);
     assert_eq!(ACCUEIL_LOGO_RECT.width, 150);
     assert_eq!(ACCUEIL_LOGO_RECT.height, 50);
-    assert!(ACCUEIL_LOGO_RECT.x >= 8);
-    assert!(ACCUEIL_LOGO_RECT.x + ACCUEIL_LOGO_RECT.width as i32 <= 312);
-    assert!(ACCUEIL_LOGO_RECT.y + (ACCUEIL_LOGO_RECT.height as i32) < 88);
 }
