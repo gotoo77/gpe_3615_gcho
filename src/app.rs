@@ -1,6 +1,6 @@
 use gotoo_pixel_engine::{Audio, Frame, Game, GameResult, Image, Key, MouseButton, TextInputEvent};
 
-use crate::branding::{decode_minitel_logo, render_accueil_branding};
+use crate::branding::{decode_minitel_logo, render_accueil_branding, render_branding_splash};
 use crate::content::ContentBundle;
 use crate::experience::{
     DATA_CHUNK_CHARACTERS, LiveServicePulse, TERMINAL_VISIBLE_CHARACTERS, TerminalTiming,
@@ -12,8 +12,26 @@ use crate::render::{render_boot, render_terminal};
 use crate::service::{NavCommand, PageId, Service};
 use crate::sound::{RetroCue, play_retro_cue, register_retro_audio};
 
-const BOOT_DURATION_SECONDS: f32 = 2.6;
+pub const BOOT_DURATION_SECONDS: f32 = 2.6;
+pub const BRANDING_SPLASH_DURATION_SECONDS: f32 = 1.2;
 const FUNCTION_KEY_FLASH_SECONDS: f32 = 0.13;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StartupStage {
+    Boot,
+    Branding,
+    Service,
+}
+
+pub fn startup_stage(elapsed_seconds: f32) -> StartupStage {
+    if elapsed_seconds < BOOT_DURATION_SECONDS {
+        StartupStage::Boot
+    } else if elapsed_seconds < BOOT_DURATION_SECONDS + BRANDING_SPLASH_DURATION_SECONDS {
+        StartupStage::Branding
+    } else {
+        StartupStage::Service
+    }
+}
 
 pub struct GchoApp {
     service: Service,
@@ -21,7 +39,7 @@ pub struct GchoApp {
     minitel_logo: Image,
     timing: TerminalTiming,
     live_pulse: LiveServicePulse,
-    boot_elapsed: f32,
+    startup_elapsed: f32,
     blink_elapsed: f32,
     transmission_elapsed: f32,
     last_visible_characters: usize,
@@ -50,7 +68,7 @@ impl GchoApp {
                 .expect("bundled 3615 GCHO Minitel logo must decode"),
             timing,
             live_pulse: LiveServicePulse::new(),
-            boot_elapsed: 0.0,
+            startup_elapsed: 0.0,
             blink_elapsed: 0.0,
             transmission_elapsed: 0.0,
             last_visible_characters: 0,
@@ -114,15 +132,35 @@ impl Game for GchoApp {
             let _ = play_retro_cue(frame.audio, RetroCue::Boot);
         }
 
-        if self.boot_elapsed < BOOT_DURATION_SECONDS {
-            self.boot_elapsed += dt;
-            if frame.input.key(Key::Enter).pressed() || frame.input.key(Key::Escape).pressed() {
-                self.boot_elapsed = BOOT_DURATION_SECONDS;
+        let startup_stage = startup_stage(self.startup_elapsed);
+        if startup_stage != StartupStage::Service {
+            let skip_requested =
+                frame.input.key(Key::Enter).pressed() || frame.input.key(Key::Escape).pressed();
+
+            match startup_stage {
+                StartupStage::Boot => {
+                    if skip_requested {
+                        self.startup_elapsed = BOOT_DURATION_SECONDS;
+                    } else {
+                        self.startup_elapsed += dt;
+                    }
+                    render_boot(
+                        frame.framebuffer,
+                        (self.startup_elapsed / BOOT_DURATION_SECONDS).clamp(0.0, 1.0),
+                    );
+                }
+                StartupStage::Branding => {
+                    if skip_requested {
+                        self.startup_elapsed =
+                            BOOT_DURATION_SECONDS + BRANDING_SPLASH_DURATION_SECONDS;
+                    } else {
+                        self.startup_elapsed += dt;
+                    }
+                    render_branding_splash(frame.framebuffer, &self.minitel_logo);
+                }
+                StartupStage::Service => unreachable!(),
             }
-            render_boot(
-                frame.framebuffer,
-                (self.boot_elapsed / BOOT_DURATION_SECONDS).clamp(0.0, 1.0),
-            );
+
             return GameResult::Continue;
         }
 
