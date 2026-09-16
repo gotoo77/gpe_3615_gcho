@@ -134,7 +134,12 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
             draw_center(framebuffer, 136, "VOUS AVEZ CHAUD ?", OFF_WHITE, 1);
             draw_center(framebuffer, 151, "BUVEZ DE L'EAU.", YELLOW, 1);
 
-            text(framebuffer, 176, "PAR LA GRACE DU CLIMAT, NOUS VEILLONS", DIM);
+            text(
+                framebuffer,
+                176,
+                "PAR LA GRACE DU CLIMAT, NOUS VEILLONS",
+                DIM,
+            );
             text(framebuffer, 188, "SUR VOS ETES COMME SUR VOS HIVERS.", DIM);
         }
         DetailId::RoyalHeatAlert => {
@@ -150,8 +155,13 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
             text(framebuffer, 152, "> RESTEZ A L'OMBRE", OFF_WHITE);
             text(framebuffer, 163, "> BUVEZ DE L'EAU", OFF_WHITE);
             text(framebuffer, 174, "> VENTILATEUR : SI DISPONIBLE", OFF_WHITE);
-            text(framebuffer, 185, "> CLIMATISATION : INDISPONIBLE", OFF_WHITE);
-            text(framebuffer, 195, "(IL FAIT AUSSI CHAUD DEMAIN)", DIM);
+            text(
+                framebuffer,
+                185,
+                "> CLIMATISATION : INDISPONIBLE",
+                OFF_WHITE,
+            );
+            text(framebuffer, 192, "(IL FAIT AUSSI CHAUD DEMAIN)", DIM);
         }
         DetailId::ArcadeScores => {
             section_rule(framebuffer, 48, "TABLE DES SCORES", GREEN);
