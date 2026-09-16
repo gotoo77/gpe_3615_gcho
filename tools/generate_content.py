@@ -19,6 +19,7 @@ SNAPSHOTS = [
     CONTENT / "news.json",
     CONTENT / "messages.json",
     CONTENT / "secrets.json",
+    CONTENT / "rencontres.json",
 ]
 
 

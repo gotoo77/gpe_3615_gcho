@@ -15,6 +15,7 @@ pub enum DetailId {
     PixelMaze,
     Mailbox,
     ChatRooms,
+    Rencontres,
     News,
     ServicePublic,
     Alerts,
@@ -109,12 +110,12 @@ const ARCADE: &[Entry] = &[
     Entry {
         key: 4,
         label: "DEMONSTRATIONS",
-        target: Target::Notice("DEMO GRAPHIQUE: 40 COLONNES. IMPRESSIONNANT."),
+        target: Target::Notice("DEMO 16 COULEURS. DEUX SONT EN GREVE."),
     },
     Entry {
         key: 5,
         label: "TELECHARGEMENTS",
-        target: Target::Notice("DEBIT ESTIME: 1200 BAUD. BON COURAGE."),
+        target: Target::Notice("TEMPS RESTANT: ENTRE 4 MINUTES ET JEUDI."),
     },
 ];
 
@@ -132,17 +133,17 @@ const MESSAGERIE: &[Entry] = &[
     Entry {
         key: 3,
         label: "RENCONTRES",
-        target: Target::Notice("COMPATIBILITE TELEMATIQUE: INDETERMINEE."),
+        target: Target::Detail(DetailId::Rencontres),
     },
     Entry {
         key: 4,
         label: "PETITES ANNONCES",
-        target: Target::Notice("VENDS MODEM PEU SERVI. CAUSE: INTERNET."),
+        target: Target::Notice("VENDS MINITEL TBE. 18400 H. PRESQUE NEUF."),
     },
     Entry {
         key: 5,
         label: "CARNET D'ADRESSES",
-        target: Target::Notice("3615 GCHO EST DEJA DANS VOS FAVORIS."),
+        target: Target::Notice("1 CONTACT. IL VOUS A BLOQUE EN 1987."),
     },
 ];
 
@@ -165,17 +166,17 @@ const INFOS: &[Entry] = &[
     Entry {
         key: 4,
         label: "CONSEILS PRATIQUES",
-        target: Target::Notice("CONSEIL: LISEZ LES CONSEILS AVANT DE LES SUIVRE."),
+        target: Target::Notice("PANNE: ETEIGNEZ, RALLUMEZ, NIEZ L'INCIDENT."),
     },
     Entry {
         key: 5,
         label: "COMMUNIQUES",
-        target: Target::Notice("AUCUN COMMUNIQUE NE NECESSITE DE COMMUNIQUER."),
+        target: Target::Notice("COMMUNIQUE PREVU DES QU'IL N'Y AURA RIEN."),
     },
     Entry {
         key: 6,
         label: "RECTIFICATIFS",
-        target: Target::Notice("LE RECTIFICATIF PRECEDENT EST RECTIFIE."),
+        target: Target::Notice("RECTIFICATIF RECTIFIE. CELUI-CI AUSSI."),
     },
 ];
 
@@ -183,12 +184,12 @@ const GPE: &[Entry] = &[
     Entry {
         key: 1,
         label: "MOTEUR PIXEL",
-        target: Target::Notice("GPE: PETIT MOTEUR, GRAND ECRAN CATHODIQUE MENTAL."),
+        target: Target::Notice("GPE: PIXELS LOCAUX. AUCUN PIXEL EXTERNALISE."),
     },
     Entry {
         key: 2,
         label: "LABORATOIRE",
-        target: Target::Notice("EXPERIENCE EN COURS. NE TOUCHEZ PAS AU FRAMEBUFFER."),
+        target: Target::Notice("NE TOUCHEZ PAS AU FRAMEBUFFER. IL SE SOUVIENT."),
     },
     Entry {
         key: 3,
@@ -211,17 +212,17 @@ const NOEUD7: &[Entry] = &[
     Entry {
         key: 3,
         label: "CARTES",
-        target: Target::Notice("AUCUNE CARTE NE MONTRE CET ENDROIT."),
+        target: Target::Notice("CARTE REFUSEE: ENDROIT NON GEOGRAPHIQUE."),
     },
     Entry {
         key: 4,
         label: "EXPERIENCES",
-        target: Target::Notice("EXPERIENCE 3615: SUJET TOUJOURS CONNECTE."),
+        target: Target::Notice("SUJET CONNECTE. SUJET NIE ETRE CONNECTE."),
     },
     Entry {
         key: 5,
         label: "CONTACT",
-        target: Target::Notice("LE CONTACT VOUS A DEJA CONTACTE."),
+        target: Target::Notice("LE CONTACT A DEJA APPELE. VOUS AVEZ OUBLIE."),
     },
     Entry {
         key: 6,

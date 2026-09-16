@@ -37,24 +37,37 @@ pub struct ContentBundle {
     pub news: ContentFile,
     pub messages: ContentFile,
     pub secrets: ContentFile,
+    pub rencontres: ContentFile,
 }
 
 impl ContentBundle {
     pub fn load_bundled() -> Self {
-        Self::from_sources(
+        Self::from_sources_with_rencontres(
             include_str!("../content/service_public.json"),
             include_str!("../content/news.json"),
             include_str!("../content/messages.json"),
             include_str!("../content/secrets.json"),
+            include_str!("../content/rencontres.json"),
         )
     }
 
     pub fn from_sources(service_public: &str, news: &str, messages: &str, secrets: &str) -> Self {
+        Self::from_sources_with_rencontres(service_public, news, messages, secrets, "")
+    }
+
+    fn from_sources_with_rencontres(
+        service_public: &str,
+        news: &str,
+        messages: &str,
+        secrets: &str,
+        rencontres: &str,
+    ) -> Self {
         Self {
             service_public: parse_or(service_public, fallback_service_public),
             news: parse_or(news, fallback_news),
             messages: parse_or(messages, fallback_messages),
             secrets: parse_or(secrets, fallback_secrets),
+            rencontres: parse_or(rencontres, fallback_rencontres),
         }
     }
 }
@@ -115,5 +128,17 @@ fn fallback_secrets() -> ContentFile {
         "noeud7",
         "MESSAGE DU MINISTERE DE LA NORMALITE",
         &["LE TERMINAL NE BOURDONNE PAS."],
+    ))
+}
+
+fn fallback_rencontres() -> ContentFile {
+    fallback_file(message(
+        "fallback-rencontres",
+        "rencontres",
+        "SERVICE RENCONTRES",
+        &[
+            "AUCUN PROFIL DISPONIBLE.",
+            "LA FACTURATION, ELLE, FONCTIONNE.",
+        ],
     ))
 }

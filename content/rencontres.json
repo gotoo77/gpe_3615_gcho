@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-09-16T00:00:00Z",
+  "messages": [
+    {
+      "id": "rencontre-001",
+      "category": "rencontres",
+      "title": "NUIT_75, 28 ANS",
+      "body": [
+        "CHERCHE CORRESPONDANT POUR LONGUES SOIREES TELEMATIQUES.",
+        "MODEM 1200 BAUD APPRECIE. HUMOUR EXIGE."
+      ]
+    },
+    {
+      "id": "rencontre-002",
+      "category": "rencontres",
+      "title": "COEUR_92, 31 ANS",
+      "body": [
+        "AIME LES BIPS, LES PAUSES DRAMATIQUES ET LES CONNEXIONS STABLES.",
+        "REPOND SI TON TERMINAL FAIT DU BRUIT."
+      ]
+    },
+    {
+      "id": "rencontre-003",
+      "category": "rencontres",
+      "title": "MYSTERE_3615, 34 ANS",
+      "body": [
+        "PHOTO NON DISPONIBLE. PROFIL NON PLUS. CHARME ADMINISTRATIF CERTIFIE.",
+        "APPELEZ AVANT QUE LE SERVICE N'EXISTE PLUS."
+      ]
+    },
+    {
+      "id": "rencontre-004",
+      "category": "rencontres",
+      "title": "ADMIN_94, 29 ANS",
+      "body": [
+        "VOTRE DOSSIER A RETENU NOTRE ATTENTION.",
+        "NOUS N'AVONS POURTANT AUCUN DOSSIER."
+      ]
+    }
+  ]
+}

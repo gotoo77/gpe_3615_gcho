@@ -23,6 +23,7 @@ fn invalid_sources_use_non_empty_fallbacks() {
     assert!(!bundle.news.messages.is_empty());
     assert!(!bundle.messages.messages.is_empty());
     assert!(!bundle.secrets.messages.is_empty());
+    assert!(!bundle.rencontres.messages.is_empty());
 }
 
 #[test]
@@ -32,4 +33,5 @@ fn bundled_snapshots_are_all_usable() {
     assert!(!bundle.news.messages.is_empty());
     assert!(!bundle.messages.messages.is_empty());
     assert!(!bundle.secrets.messages.is_empty());
+    assert!(!bundle.rencontres.messages.is_empty());
 }
