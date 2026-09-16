@@ -80,12 +80,7 @@ pub(crate) fn render_accueil_branding(
         ImageFit::Contain,
         ImageFilter::Nearest,
     );
-    draw_center(
-        framebuffer,
-        78,
-        "SERVICE TELEMATIQUE CLIMATIQUE",
-        OFF_WHITE,
-    );
+    draw_center(framebuffer, 78, "SERVICE TELEMATIQUE CLIMATIQUE", OFF_WHITE);
 
     render_royal_bust(framebuffer);
 
