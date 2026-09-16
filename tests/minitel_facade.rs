@@ -65,9 +65,12 @@ fn retro_audio_catalog_is_local_wav_and_has_distinct_cues() {
     register_retro_audio(&mut audio).expect("retro audio should register");
 
     assert_eq!(audio.registered.len(), 5);
-    assert!(audio.registered.iter().all(|(_, len, prefix)| {
-        *len > 44 && prefix == b"RIFF"
-    }));
+    assert!(
+        audio
+            .registered
+            .iter()
+            .all(|(_, len, prefix)| { *len > 44 && prefix == b"RIFF" })
+    );
 
     for cue in [
         RetroCue::Boot,
