@@ -13,6 +13,7 @@ pub enum PageId {
 pub enum DetailId {
     ArcadeScores,
     Mailbox,
+    News,
     ServicePublic,
     GpeProjects,
     Node7File,
@@ -141,7 +142,7 @@ const INFOS: &[Entry] = &[
     Entry {
         key: 1,
         label: "BREVES",
-        target: Target::Notice("LA JOURNEE CONTINUE. D'AUTRES INFORMATIONS SUIVRONT."),
+        target: Target::Detail(DetailId::News),
     },
     Entry {
         key: 2,
