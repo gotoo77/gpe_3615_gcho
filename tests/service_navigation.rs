@@ -117,3 +117,20 @@ fn summary_clears_detail_state() {
     assert_eq!(service.current_page(), PageId::Accueil);
     assert_eq!(service.current_detail(), None);
 }
+
+#[test]
+fn mfe3_selected_entries_open_detail_screens_instead_of_notices() {
+    let cases = [(1, 2), (2, 2), (3, 3), (5, 2)];
+
+    for (service_key, entry_key) in cases {
+        let mut service = Service::new();
+        open_page(&mut service, service_key);
+        open_page(&mut service, entry_key);
+
+        assert!(
+            service.current_detail().is_some(),
+            "service {service_key}, entry {entry_key} should open a detail screen"
+        );
+        assert_eq!(service.notice(), None);
+    }
+}
