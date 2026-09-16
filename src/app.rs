@@ -1,4 +1,6 @@
-use gotoo_pixel_engine::{Audio, Frame, Game, GameResult, Image, Key, MouseButton, TextInputEvent};
+use gotoo_pixel_engine::{
+    Audio, Frame, Game, GameResult, Image, Key, MouseButton, TextInputEvent, TouchPhase,
+};
 
 use crate::branding::{decode_minitel_logo, render_accueil_branding, render_branding_splash};
 use crate::content::ContentBundle;
@@ -11,6 +13,7 @@ use crate::facade::{FunctionKey, function_key_at};
 use crate::render::{render_boot, render_terminal};
 use crate::service::{NavCommand, PageId, Service};
 use crate::sound::{RetroCue, play_retro_cue, register_retro_audio};
+use crate::touch::menu_tap_command;
 
 pub const BOOT_DURATION_SECONDS: f32 = 2.6;
 pub const BRANDING_SPLASH_DURATION_SECONDS: f32 = 1.2;
@@ -146,8 +149,15 @@ impl Game for GchoApp {
 
         let startup_stage = startup_stage(self.startup_elapsed);
         if startup_stage != StartupStage::Service {
-            let skip_requested =
-                frame.input.key(Key::Enter).pressed() || frame.input.key(Key::Escape).pressed();
+            let touch_skip_requested = frame
+                .input
+                .touches()
+                .iter()
+                .any(|touch| touch.phase == TouchPhase::Ended && touch.position.is_some());
+            let skip_requested = frame.input.key(Key::Enter).pressed()
+                || frame.input.key(Key::Escape).pressed()
+                || frame.input.mouse_button(MouseButton::Left).pressed()
+                || touch_skip_requested;
 
             match startup_stage {
                 StartupStage::Boot => {
@@ -215,15 +225,28 @@ impl Game for GchoApp {
         if frame.input.key(Key::H).pressed() {
             commands.push((NavCommand::Guide, Some(FunctionKey::Guide)));
         }
-        if frame.input.mouse_button(MouseButton::Left).pressed()
-            && let Some((x, y)) = frame.input.mouse_position()
-            && let Some(function_key) = function_key_at(x, y)
-        {
-            commands.push((function_key.command(), Some(function_key)));
-        }
 
         for (command, function_key) in commands {
             self.apply_command(frame.audio, command, function_key);
+        }
+
+        let pointer_tap = if frame.input.mouse_button(MouseButton::Left).pressed() {
+            frame.input.mouse_position()
+        } else {
+            frame
+                .input
+                .touches()
+                .iter()
+                .find(|touch| touch.phase == TouchPhase::Ended)
+                .and_then(|touch| touch.position)
+        };
+
+        if let Some((x, y)) = pointer_tap {
+            if let Some(function_key) = function_key_at(x, y) {
+                self.apply_command(frame.audio, function_key.command(), Some(function_key));
+            } else if let Some(command) = menu_tap_command(&self.service, x, y) {
+                self.apply_command(frame.audio, command, None);
+            }
         }
 
         if self.service.take_reconnect_requested() {
