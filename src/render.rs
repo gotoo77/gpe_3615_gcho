@@ -129,6 +129,16 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
             text(framebuffer, 132, "POUR JOUER, VEUILLEZ INSERER", OFF_WHITE);
             text(framebuffer, 144, "UNE PIECE DANS VOTRE MINITEL.", OFF_WHITE);
         }
+        DetailId::PixelMaze => {
+            section_rule(framebuffer, 48, "PIXEL MAZE V1.2", GREEN);
+            text(framebuffer, 64, "+-------+-------+-------+", CYAN);
+            text(framebuffer, 78, "|   @   |       | SORTIE |", OFF_WHITE);
+            text(framebuffer, 92, "| +---+ | +---+ | +---+ |", OFF_WHITE);
+            text(framebuffer, 106, "|     |   |       |     |", OFF_WHITE);
+            text(framebuffer, 120, "+---+ +---+ +---+ +---+ +", OFF_WHITE);
+            text(framebuffer, 146, "PARTIE SUSPENDUE DEPUIS 1987.", YELLOW);
+            text(framebuffer, 162, "TEMPS ECOULE : 341773 HEURES", DIM);
+        }
         DetailId::Mailbox => {
             section_rule(framebuffer, 48, "BOITE DE RECEPTION", GREEN);
             render_editorial_full(framebuffer, 62, &content.messages, GREEN);
@@ -140,6 +150,15 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
                 "DESTINATAIRE HORS LIGNE DEPUIS 1992.",
                 OFF_WHITE,
             );
+        }
+        DetailId::ChatRooms => {
+            section_rule(framebuffer, 48, "SALONS DISPONIBLES", GREEN);
+            text(framebuffer, 64, "#GENERAL ........ 03 CONNECTES", CYAN);
+            text(framebuffer, 80, "#JEUX ........... 01 CONNECTE", OFF_WHITE);
+            text(framebuffer, 96, "#MINITEL ........ 11 FANTOMES", OFF_WHITE);
+            text(framebuffer, 112, "#SECRET ......... ACCES REFUSE", RED);
+            text(framebuffer, 142, "DERNIER MESSAGE : 17:42  12/05/1996", DIM);
+            text(framebuffer, 158, "PERSONNE N'A QUITTE LE SALON.", YELLOW);
         }
         DetailId::News => {
             section_rule(framebuffer, 48, "FIL DES BREVES", CYAN);
@@ -157,6 +176,15 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
             render_editorial_full(framebuffer, 62, &content.service_public, CYAN);
             text(framebuffer, 162, "MESSAGE AUTOMATIQUEMENT APPROUVE", DIM);
             text(framebuffer, 174, "PAR LE MINISTERE DE LA NORMALITE.", DIM);
+        }
+        DetailId::Alerts => {
+            section_rule(framebuffer, 48, "CENTRE NATIONAL D'ALERTE", CYAN);
+            text(framebuffer, 66, "NIVEAU : ADMINISTRATIVEMENT VIGILANT", YELLOW);
+            text(framebuffer, 86, "SECTEUR : ENSEMBLE DU TERRITOIRE", OFF_WHITE);
+            text(framebuffer, 102, "MOTIF : SITUATION A SURVEILLER", OFF_WHITE);
+            text(framebuffer, 126, "CONSIGNE 1 : RESTEZ INFORME", CYAN);
+            text(framebuffer, 142, "CONSIGNE 2 : NE PANIQUEZ PAS", CYAN);
+            text(framebuffer, 158, "CONSIGNE 3 : PANIQUE NON HOMOLOGUEE", DIM);
         }
         DetailId::GpeProjects => {
             section_rule(framebuffer, 48, "PROJETS ACCESSIBLES", GREEN);
@@ -190,6 +218,16 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
             text(framebuffer, 164, "DATE D'OUVERTURE : 00/00/0000", OFF_WHITE);
             text(framebuffer, 180, "DATE DE FERMETURE : EN COURS", OFF_WHITE);
             text(framebuffer, 198, "NE DECONNECTEZ PAS LE TERMINAL.", RED);
+        }
+        DetailId::Node7Witnesses => {
+            section_rule(framebuffer, 48, "DEPOSITIONS ARCHIVEES", RED);
+            text(framebuffer, 64, "TEMOIN 01 : N'A RIEN VU", OFF_WHITE);
+            text(framebuffer, 80, "TEMOIN 02 : CONFIRME N'AVOIR RIEN VU", OFF_WHITE);
+            text(framebuffer, 96, "TEMOIN 03 : N'EXISTE PAS", OFF_WHITE);
+            text(framebuffer, 120, "CONCORDANCE DES TEMOIGNAGES : 100%", YELLOW);
+            text(framebuffer, 144, "INCIDENT OBSERVE : AUCUN", DIM);
+            text(framebuffer, 160, "DOSSIER CLASSE : NON", RED);
+            text(framebuffer, 176, "RAISON : TEMOINS TROP COHERENTS", RED);
         }
     }
 }
@@ -296,11 +334,15 @@ fn fit(text: impl AsRef<str>, max_chars: usize) -> String {
 fn detail_title(detail: DetailId) -> &'static str {
     match detail {
         DetailId::ArcadeScores => "ARCADE / CLASSEMENT",
+        DetailId::PixelMaze => "ARCADE / PIXEL MAZE",
         DetailId::Mailbox => "MESSAGERIE / MA BOITE",
+        DetailId::ChatRooms => "MESSAGERIE / SALONS",
         DetailId::News => "INFOS / BREVES",
         DetailId::ServicePublic => "INFOS / SERVICE PUBLIC",
+        DetailId::Alerts => "INFOS / ALERTES",
         DetailId::GpeProjects => "GPE / PROJETS",
         DetailId::Node7File => "NOEUD 7 / LE FICHIER",
+        DetailId::Node7Witnesses => "NOEUD 7 / LES TEMOINS",
     }
 }
 
