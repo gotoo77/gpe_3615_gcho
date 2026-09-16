@@ -96,6 +96,10 @@ Pendant une transmission, un cue tres court et discret accompagne chaque **chunk
 
 L'accueil integre le logo Minitel fourni dans le framebuffer GPE. L'image est embarquee dans le binaire/WASM, decodee une seule fois au demarrage puis rendue en `Contain` avec filtrage `Nearest`. Le branding reste limite a l'accueil ; les autres pages conservent leur header texte compact.
 
+## MFE-9 — splash de connexion
+
+Apres `CONNEXION ETABLIE`, une courte phase de branding affiche le logo Minitel dans le framebuffer avant l'arrivee sur l'accueil. La sequence `Boot -> Branding -> Service` est entierement locale et deterministe ; `Entree` ou `Echap` permet de passer la phase courante. Aucun etat HTML ni systeme generique de splash/theme n'est introduit.
+
 ## Lancer en natif
 
 ```bash
@@ -162,7 +166,7 @@ Le code reste volontairement petit :
 - `src/service.rs` : etat, navigation et sous-ecrans ;
 - `src/content.rs` : parsing et fallbacks editoriaux ;
 - `src/experience.rs` : debit simule, chunks, rotation et etat vivant de session ;
-- `src/branding.rs` : asset Minitel embarque et composition specifique de l'accueil ;
+- `src/branding.rs` : asset Minitel embarque, splash et composition specifique de l'accueil ;
 - `src/app.rs` : adaptation input GPE + boucle runtime ;
 - `src/render.rs` : rendu Videotex framebuffer-only ;
 - `src/sound.rs` : cues audio locaux ;
