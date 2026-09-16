@@ -26,6 +26,8 @@ pub enum DetailId {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NavCommand {
     Digit(u8),
+    Next,
+    Previous,
     Send,
     Correction,
     Return,
@@ -323,6 +325,8 @@ impl Service {
                     self.notice = Some("CHOIX INVALIDE. LE TERMINAL VOUS JUGE SILENCIEUSEMENT.");
                 }
             }
+            NavCommand::Next => self.move_selection(1),
+            NavCommand::Previous => self.move_selection(-1),
             NavCommand::Send => {
                 if self.detail.is_some() {
                     self.notice = Some("AUCUNE COMMANDE A ENVOYER SUR CET ECRAN.");
@@ -363,6 +367,31 @@ impl Service {
                 self.follow(Target::Page(PageId::Aide));
             }
         }
+    }
+
+    fn move_selection(&mut self, direction: i32) {
+        self.notice = None;
+        if self.detail.is_some() {
+            return;
+        }
+
+        let entries = self.entries();
+        if entries.is_empty() {
+            self.pending = None;
+            return;
+        }
+
+        let current_index = self
+            .pending
+            .and_then(|key| entries.iter().position(|entry| entry.key == key));
+        let next_index = match (current_index, direction.is_positive()) {
+            (None, true) => 0,
+            (None, false) => entries.len() - 1,
+            (Some(index), true) => (index + 1) % entries.len(),
+            (Some(0), false) => entries.len() - 1,
+            (Some(index), false) => index - 1,
+        };
+        self.pending = Some(entries[next_index].key);
     }
 
     fn follow(&mut self, target: Target) {

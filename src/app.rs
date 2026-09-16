@@ -1,9 +1,10 @@
 use gotoo_pixel_engine::{Audio, Frame, Game, GameResult, Key, MouseButton, TextInputEvent};
 
 use crate::content::ContentBundle;
+use crate::experience::{TerminalTiming, render_public_service_banner, render_transmission_mask};
 use crate::facade::{FunctionKey, function_key_at};
 use crate::render::{render_boot, render_terminal};
-use crate::service::{NavCommand, Service};
+use crate::service::{NavCommand, PageId, Service};
 use crate::sound::{RetroCue, play_retro_cue, register_retro_audio};
 
 const BOOT_DURATION_SECONDS: f32 = 2.6;
@@ -12,8 +13,10 @@ const FUNCTION_KEY_FLASH_SECONDS: f32 = 0.13;
 pub struct GchoApp {
     service: Service,
     content: ContentBundle,
+    timing: TerminalTiming,
     boot_elapsed: f32,
     blink_elapsed: f32,
+    transmission_elapsed: f32,
     audio_registration_attempted: bool,
     boot_cue_attempted: bool,
     active_function_key: Option<FunctionKey>,
@@ -28,11 +31,17 @@ impl Default for GchoApp {
 
 impl GchoApp {
     pub fn new() -> Self {
+        Self::with_timing(TerminalTiming::default())
+    }
+
+    pub fn with_timing(timing: TerminalTiming) -> Self {
         Self {
             service: Service::new(),
             content: ContentBundle::load_bundled(),
+            timing,
             boot_elapsed: 0.0,
             blink_elapsed: 0.0,
+            transmission_elapsed: 0.0,
             audio_registration_attempted: false,
             boot_cue_attempted: false,
             active_function_key: None,
@@ -46,12 +55,21 @@ impl GchoApp {
         command: NavCommand,
         function_key: Option<FunctionKey>,
     ) {
+        let previous_view = (self.service.current_page(), self.service.current_detail());
         self.service.apply(command);
+        let current_view = (self.service.current_page(), self.service.current_detail());
+        if current_view != previous_view {
+            self.transmission_elapsed = 0.0;
+        }
+
         let cue = if self.service.notice().is_some() {
             RetroCue::Error
         } else {
             match command {
-                NavCommand::Digit(_) | NavCommand::Correction => RetroCue::Key,
+                NavCommand::Digit(_)
+                | NavCommand::Next
+                | NavCommand::Previous
+                | NavCommand::Correction => RetroCue::Key,
                 NavCommand::Send => RetroCue::Send,
                 NavCommand::Return | NavCommand::Summary | NavCommand::Guide => RetroCue::Navigate,
             }
@@ -95,6 +113,8 @@ impl Game for GchoApp {
             return GameResult::Continue;
         }
 
+        self.transmission_elapsed += dt;
+
         let mut commands = Vec::new();
         for event in frame.input.text_events() {
             match event {
@@ -109,10 +129,19 @@ impl Game for GchoApp {
                 TextInputEvent::Home => {
                     commands.push((NavCommand::Summary, Some(FunctionKey::Summary)))
                 }
-                TextInputEvent::Left | TextInputEvent::Right | TextInputEvent::End => {}
+                TextInputEvent::Left => {
+                    commands.push((NavCommand::Return, Some(FunctionKey::Return)))
+                }
+                TextInputEvent::Right | TextInputEvent::End => {}
             }
         }
 
+        if frame.input.key(Key::Up).pressed() {
+            commands.push((NavCommand::Previous, None));
+        }
+        if frame.input.key(Key::Down).pressed() {
+            commands.push((NavCommand::Next, None));
+        }
         if frame.input.key(Key::Enter).pressed() {
             commands.push((NavCommand::Send, Some(FunctionKey::Send)));
         }
@@ -143,6 +172,16 @@ impl Game for GchoApp {
             &self.content,
             self.blink_elapsed < 0.55,
             self.active_function_key,
+        );
+        if self.service.current_page() == PageId::Accueil
+            && self.service.current_detail().is_none()
+            && self.service.notice().is_none()
+        {
+            render_public_service_banner(frame.framebuffer);
+        }
+        render_transmission_mask(
+            frame.framebuffer,
+            self.timing.visible_characters(self.transmission_elapsed),
         );
         GameResult::Continue
     }

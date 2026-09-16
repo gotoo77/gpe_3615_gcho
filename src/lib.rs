@@ -1,5 +1,6 @@
 mod app;
 mod content;
+mod experience;
 mod facade;
 mod render;
 mod service;
@@ -7,6 +8,7 @@ mod sound;
 
 pub use app::GchoApp;
 pub use content::{ContentBundle, ContentFile, EditorialMessage};
+pub use experience::{TerminalTiming, public_service_slogan};
 pub use facade::{
     FunctionKey, FunctionKeySpec, function_key_at, function_keys, snapshot_date_label,
 };
