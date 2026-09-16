@@ -1,4 +1,5 @@
 mod app;
+mod branding;
 mod content;
 mod experience;
 mod facade;
@@ -7,6 +8,7 @@ mod service;
 mod sound;
 
 pub use app::GchoApp;
+pub use branding::{ACCUEIL_LOGO_RECT, decode_minitel_logo};
 pub use content::{ContentBundle, ContentFile, EditorialMessage};
 pub use experience::{
     DATA_CHUNK_CHARACTERS, LiveServicePulse, TerminalTiming, data_chunks_crossed,
