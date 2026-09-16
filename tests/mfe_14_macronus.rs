@@ -8,7 +8,11 @@ fn activate(service: &mut Service, digit: u8) {
 #[test]
 fn accueil_is_the_new_royal_service_home() {
     let service = Service::new();
-    let labels: Vec<_> = service.entries().iter().map(|entry| entry.label).collect();
+    let labels: Vec<_> = service
+        .entries()
+        .iter()
+        .map(|entry| entry.label)
+        .collect();
 
     assert_eq!(service.current_page(), PageId::Accueil);
     assert_eq!(
@@ -29,11 +33,17 @@ fn royal_primary_entries_open_real_detail_screens() {
     let mut service = Service::new();
 
     activate(&mut service, 1);
-    assert_eq!(service.current_detail(), Some(DetailId::RoyalCommunique));
+    assert_eq!(
+        service.current_detail(),
+        Some(DetailId::RoyalCommunique)
+    );
 
     service.apply(NavCommand::Summary);
     activate(&mut service, 2);
-    assert_eq!(service.current_detail(), Some(DetailId::RoyalHeatAlert));
+    assert_eq!(
+        service.current_detail(),
+        Some(DetailId::RoyalHeatAlert)
+    );
 }
 
 #[test]
@@ -43,7 +53,10 @@ fn suite_preserves_the_existing_gcho_services() {
     activate(&mut service, 6);
     assert_eq!(service.current_page(), PageId::Services);
     assert_eq!(service.entries()[0].label, "ARCADE       JEUX ET DEMOS");
-    assert_eq!(service.entries()[1].label, "MESSAGERIE   DIALOGUER, RENCONTRER");
+    assert_eq!(
+        service.entries()[1].label,
+        "MESSAGERIE   DIALOGUER, RENCONTRER"
+    );
 
     activate(&mut service, 1);
     assert_eq!(service.current_page(), PageId::Arcade);
