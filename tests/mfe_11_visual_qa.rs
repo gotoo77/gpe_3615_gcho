@@ -1,6 +1,6 @@
 use gpe_3615_gcho::{
-    FUNCTION_KEYS_TOP_Y, LIVE_STATUS_HEIGHT, LIVE_STATUS_TOP_Y, NODE7_FILE_FINAL_Y,
-    NOTICE_HEIGHT, NOTICE_TOP_Y, PageId, choice_prompt_y, function_keys,
+    FUNCTION_KEYS_TOP_Y, LIVE_STATUS_HEIGHT, LIVE_STATUS_TOP_Y, NODE7_FILE_FINAL_Y, NOTICE_HEIGHT,
+    NOTICE_TOP_Y, PageId, choice_prompt_y, function_keys,
 };
 
 const TEXT_HEIGHT: i32 = 7;
