@@ -6,6 +6,7 @@ mod facade;
 mod render;
 mod service;
 mod sound;
+mod touch;
 
 pub use app::{
     BOOT_DURATION_SECONDS, BRANDING_SPLASH_DURATION_SECONDS, GchoApp, StartupStage, startup_stage,
@@ -23,6 +24,7 @@ pub use facade::{
 pub use render::{NODE7_FILE_FINAL_Y, NOTICE_HEIGHT, NOTICE_TOP_Y, choice_prompt_y};
 pub use service::{DetailId, Entry, NavCommand, PageId, Service};
 pub use sound::{RetroCue, play_retro_cue, register_retro_audio};
+pub use touch::{menu_entry_at, menu_tap_command};
 
 use gotoo_pixel_engine::EngineConfig;
 
