@@ -318,23 +318,12 @@ fn render_notice(framebuffer: &mut Framebuffer, notice: Option<&str>) {
     let Some(notice) = notice else {
         return;
     };
-    framebuffer.fill_rect(
-        9,
-        NOTICE_TOP_Y,
-        302,
-        NOTICE_HEIGHT,
-        Pixel::rgb(8, 24, 28),
-    );
+    framebuffer.fill_rect(9, NOTICE_TOP_Y, 302, NOTICE_HEIGHT, Pixel::rgb(8, 24, 28));
     framebuffer.draw_rect(9, NOTICE_TOP_Y, 302, NOTICE_HEIGHT, RED);
     framebuffer.draw_text(14, NOTICE_TOP_Y + 6, &fit(notice, 46), YELLOW);
     if notice.chars().count() > 46 {
         let rest: String = notice.chars().skip(46).collect();
-        framebuffer.draw_text(
-            14,
-            NOTICE_TOP_Y + 16,
-            &fit(rest.trim_start(), 46),
-            YELLOW,
-        );
+        framebuffer.draw_text(14, NOTICE_TOP_Y + 16, &fit(rest.trim_start(), 46), YELLOW);
     }
 }
 
