@@ -6,6 +6,8 @@ const BG: Pixel = Pixel::rgb(2, 7, 10);
 const DIM: Pixel = Pixel::rgb(20, 48, 55);
 const OFF_WHITE: Pixel = Pixel::rgb(225, 232, 218);
 const CYAN: Pixel = Pixel::rgb(50, 220, 225);
+const BLUE: Pixel = Pixel::rgb(80, 130, 255);
+const RED: Pixel = Pixel::rgb(245, 85, 75);
 
 pub const ACCUEIL_LOGO_RECT: Rect = Rect {
     x: 85,
@@ -13,6 +15,12 @@ pub const ACCUEIL_LOGO_RECT: Rect = Rect {
     width: 150,
     height: 50,
 };
+
+pub const ACCUEIL_MENU_LEFT_X: i32 = 98;
+pub const ACCUEIL_MENU_RIGHT_X: i32 = 311;
+pub const ACCUEIL_MENU_START_Y: i32 = 94;
+pub const ACCUEIL_MENU_STEP: i32 = 16;
+pub const ACCUEIL_MENU_ROW_HEIGHT: i32 = 12;
 
 const SPLASH_LOGO_RECT: Rect = Rect {
     x: 40,
@@ -57,43 +65,84 @@ pub(crate) fn render_accueil_branding(
     service: &Service,
     logo: &Image,
 ) {
-    // Replace only the accueil content band. The terminal frame, header,
-    // public-service banner, live status and function keys remain owned by
-    // their existing renderers.
-    framebuffer.fill_rect(9, 22, 302, 138, BG);
-    for y in (22..160).step_by(4) {
+    framebuffer.fill_rect(9, 22, 302, 176, BG);
+    for y in (22..198).step_by(4) {
         framebuffer.draw_line(9, y, 310, y, Pixel::rgb(3, 12, 15));
     }
 
-    framebuffer.draw_line(66, 25, 254, 25, DIM);
+    framebuffer.draw_line(14, 25, 109, 25, BLUE);
+    framebuffer.draw_line(110, 25, 209, 25, OFF_WHITE);
+    framebuffer.draw_line(210, 25, 305, 25, RED);
     framebuffer.draw_image_fit(
         logo,
         ACCUEIL_LOGO_RECT,
         ImageFit::Contain,
         ImageFilter::Nearest,
     );
-    framebuffer.draw_line(66, 79, 254, 79, DIM);
     draw_center(
         framebuffer,
-        81,
-        "SERVICE VIDEOTEX GCHO // CANAL OUVERT",
-        DIM,
+        78,
+        "SERVICE TELEMATIQUE CLIMATIQUE",
+        OFF_WHITE,
     );
 
+    render_royal_bust(framebuffer);
+
     for (index, entry) in service.entries().iter().enumerate() {
-        let y = 91 + index as i32 * 10;
+        let y = ACCUEIL_MENU_START_Y + index as i32 * ACCUEIL_MENU_STEP;
         let selected = service.pending_digit() == Some(entry.key);
         if selected {
-            framebuffer.fill_rect(9, y - 2, 302, 10, CYAN);
+            framebuffer.fill_rect(
+                ACCUEIL_MENU_LEFT_X,
+                y - 2,
+                (ACCUEIL_MENU_RIGHT_X - ACCUEIL_MENU_LEFT_X) as u32,
+                ACCUEIL_MENU_ROW_HEIGHT as u32,
+                BLUE,
+            );
         }
-        let ink = if selected { BG } else { OFF_WHITE };
+        let ink = if selected { OFF_WHITE } else { OFF_WHITE };
         framebuffer.draw_text(
-            14,
+            ACCUEIL_MENU_LEFT_X + 5,
             y,
-            &format!("{}  {}", entry.key, fit(entry.label, 43)),
+            &format!("{} {}", entry.key, fit(entry.label, 31)),
             ink,
         );
     }
+
+    framebuffer.draw_line(98, 190, 305, 190, DIM);
+    framebuffer.draw_text(101, 192, "FICTION TELEMATIQUE // CANAL ROYAL", DIM);
+}
+
+fn render_royal_bust(framebuffer: &mut Framebuffer) {
+    const LEFT: i32 = 14;
+    const TOP: i32 = 94;
+
+    framebuffer.draw_rect(LEFT, TOP, 76, 94, DIM);
+    framebuffer.fill_rect(LEFT + 3, TOP + 3, 23, 4, BLUE);
+    framebuffer.fill_rect(LEFT + 26, TOP + 3, 23, 4, OFF_WHITE);
+    framebuffer.fill_rect(LEFT + 49, TOP + 3, 24, 4, RED);
+
+    framebuffer.draw_line(LEFT + 25, TOP + 21, LEFT + 51, TOP + 21, OFF_WHITE);
+    framebuffer.draw_line(LEFT + 29, TOP + 15, LEFT + 34, TOP + 21, OFF_WHITE);
+    framebuffer.draw_line(LEFT + 38, TOP + 12, LEFT + 38, TOP + 21, OFF_WHITE);
+    framebuffer.draw_line(LEFT + 47, TOP + 15, LEFT + 42, TOP + 21, OFF_WHITE);
+    framebuffer.fill_rect(LEFT + 29, TOP + 24, 22, 5, OFF_WHITE);
+
+    framebuffer.fill_rect(LEFT + 27, TOP + 31, 26, 34, OFF_WHITE);
+    framebuffer.fill_rect(LEFT + 23, TOP + 38, 34, 20, OFF_WHITE);
+    framebuffer.fill_rect(LEFT + 31, TOP + 30, 18, 5, BG);
+    framebuffer.fill_rect(LEFT + 30, TOP + 43, 5, 3, BG);
+    framebuffer.fill_rect(LEFT + 45, TOP + 43, 5, 3, BG);
+    framebuffer.draw_line(LEFT + 40, TOP + 47, LEFT + 39, TOP + 54, BG);
+    framebuffer.draw_line(LEFT + 34, TOP + 58, LEFT + 46, TOP + 58, BG);
+
+    framebuffer.fill_rect(LEFT + 34, TOP + 65, 12, 6, OFF_WHITE);
+    framebuffer.draw_line(LEFT + 25, TOP + 72, LEFT + 13, TOP + 86, OFF_WHITE);
+    framebuffer.draw_line(LEFT + 55, TOP + 72, LEFT + 67, TOP + 86, OFF_WHITE);
+    framebuffer.draw_line(LEFT + 13, TOP + 86, LEFT + 67, TOP + 86, OFF_WHITE);
+    framebuffer.draw_line(LEFT + 40, TOP + 71, LEFT + 40, TOP + 85, DIM);
+
+    framebuffer.draw_text(LEFT + 8, TOP + 88, "MACRONUS IER", CYAN);
 }
 
 fn draw_center(framebuffer: &mut Framebuffer, y: i32, text: &str, color: Pixel) {
