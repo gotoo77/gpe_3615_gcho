@@ -1,0 +1,34 @@
+use crate::service::{NavCommand, PageId, Service};
+
+const MENU_LEFT_X: i32 = 9;
+const MENU_RIGHT_X: i32 = 311;
+
+pub fn menu_entry_at(service: &Service, x: i32, y: i32) -> Option<u8> {
+    if service.current_detail().is_some() || !(MENU_LEFT_X..MENU_RIGHT_X).contains(&x) {
+        return None;
+    }
+
+    let (start_y, step, top_padding, height) = match service.current_page() {
+        PageId::Accueil => (91, 10, 2, 10),
+        _ => (52, 15, 3, 12),
+    };
+
+    service
+        .entries()
+        .iter()
+        .enumerate()
+        .find_map(|(index, entry)| {
+            let row_y = start_y + index as i32 * step;
+            let top = row_y - top_padding;
+            (y >= top && y < top + height).then_some(entry.key)
+        })
+}
+
+pub fn menu_tap_command(service: &Service, x: i32, y: i32) -> Option<NavCommand> {
+    let key = menu_entry_at(service, x, y)?;
+    if service.pending_digit() == Some(key) {
+        Some(NavCommand::Send)
+    } else {
+        Some(NavCommand::Digit(key))
+    }
+}
