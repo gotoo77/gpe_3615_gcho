@@ -12,6 +12,7 @@ const BLUE: Pixel = Pixel::rgb(80, 130, 255);
 const GREEN: Pixel = Pixel::rgb(80, 230, 120);
 const RED: Pixel = Pixel::rgb(245, 85, 75);
 const YELLOW: Pixel = Pixel::rgb(245, 215, 70);
+const ORANGE: Pixel = Pixel::rgb(255, 150, 35);
 const PINK: Pixel = Pixel::rgb(245, 105, 185);
 
 pub const NOTICE_TOP_Y: i32 = 172;
@@ -119,6 +120,39 @@ pub fn render_terminal(
 
 fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &ContentBundle) {
     match detail {
+        DetailId::RoyalCommunique => {
+            section_rule(framebuffer, 48, "=== COMMUNIQUE ROYAL ===", CYAN);
+            framebuffer.draw_line(14, 62, 109, 62, BLUE);
+            framebuffer.draw_line(110, 62, 209, 62, OFF_WHITE);
+            framebuffer.draw_line(210, 62, 305, 62, RED);
+            text(framebuffer, 71, "MACRONUS IER", YELLOW);
+            text(framebuffer, 84, "PROTECTEUR DU THERMOSTAT", OFF_WHITE);
+            text(framebuffer, 97, "GARDIEN DU VENTILATEUR", OFF_WHITE);
+            text(framebuffer, 110, "PREMIER DU NOM", OFF_WHITE);
+
+            framebuffer.draw_rect(14, 126, 291, 40, OFF_WHITE);
+            draw_center(framebuffer, 136, "VOUS AVEZ CHAUD ?", OFF_WHITE, 1);
+            draw_center(framebuffer, 151, "BUVEZ DE L'EAU.", YELLOW, 1);
+
+            text(framebuffer, 176, "PAR LA GRACE DU CLIMAT, NOUS VEILLONS", DIM);
+            text(framebuffer, 188, "SUR VOS ETES COMME SUR VOS HIVERS.", DIM);
+        }
+        DetailId::RoyalHeatAlert => {
+            section_rule(framebuffer, 48, "ALERTE CHALEUR", ORANGE);
+            framebuffer.fill_rect(14, 63, 291, 16, ORANGE);
+            draw_center(framebuffer, 68, "NIVEAU ORANGE ROYAL", BG, 1);
+
+            framebuffer.draw_rect(14, 87, 291, 43, OFF_WHITE);
+            text(framebuffer, 96, "TEMPERATURE : 42 C", ORANGE);
+            text(framebuffer, 113, "RESSENTI : C'EST COMPLIQUE", ORANGE);
+
+            text(framebuffer, 140, "NOS CONSEILS ROYAUX :", OFF_WHITE);
+            text(framebuffer, 152, "> RESTEZ A L'OMBRE", OFF_WHITE);
+            text(framebuffer, 163, "> BUVEZ DE L'EAU", OFF_WHITE);
+            text(framebuffer, 174, "> VENTILATEUR : SI DISPONIBLE", OFF_WHITE);
+            text(framebuffer, 185, "> CLIMATISATION : INDISPONIBLE", OFF_WHITE);
+            text(framebuffer, 195, "(IL FAIT AUSSI CHAUD DEMAIN)", DIM);
+        }
         DetailId::ArcadeScores => {
             section_rule(framebuffer, 48, "TABLE DES SCORES", GREEN);
             text(framebuffer, 62, "01  ADMIN ............... 999999", YELLOW);
@@ -310,7 +344,7 @@ fn render_page_content(framebuffer: &mut Framebuffer, page: PageId, content: &Co
             framebuffer.draw_text(14, 146, "CREDITS: 00", GREEN);
             framebuffer.draw_text(14, 159, "HAUT SCORE: ADMIN", YELLOW);
         }
-        PageId::Accueil => framebuffer.draw_text(14, 172, "RESEAU GCHO: OUVERT", GREEN),
+        PageId::Accueil | PageId::Services => {}
     }
 }
 
@@ -432,6 +466,8 @@ fn fit(text: impl AsRef<str>, max_chars: usize) -> String {
 
 fn detail_title(detail: DetailId) -> &'static str {
     match detail {
+        DetailId::RoyalCommunique => "SERVICE ROYAL / COMMUNIQUE",
+        DetailId::RoyalHeatAlert => "SERVICE ROYAL / ALERTE CANICULE",
         DetailId::ArcadeScores => "ARCADE / CLASSEMENT",
         DetailId::PixelMaze => "ARCADE / PIXEL MAZE",
         DetailId::Mailbox => "MESSAGERIE / MA BOITE",
@@ -448,12 +484,13 @@ fn detail_title(detail: DetailId) -> &'static str {
 
 fn page_identity(page: PageId) -> (&'static str, &'static str) {
     match page {
-        PageId::Accueil => ("01/07", "3615 GCHO"),
-        PageId::Arcade => ("02/07", "ARCADE"),
-        PageId::Messagerie => ("03/07", "MESSAGERIE"),
-        PageId::Infos => ("04/07", "INFOS"),
-        PageId::Gpe => ("05/07", "GPE"),
-        PageId::Noeud7 => ("06/07", "NOEUD 7"),
-        PageId::Aide => ("07/07", "AIDE"),
+        PageId::Accueil => ("01/08", "3615 GCHO"),
+        PageId::Services => ("02/08", "AUTRES SERVICES"),
+        PageId::Arcade => ("03/08", "ARCADE"),
+        PageId::Messagerie => ("04/08", "MESSAGERIE"),
+        PageId::Infos => ("05/08", "INFOS"),
+        PageId::Gpe => ("06/08", "GPE"),
+        PageId::Noeud7 => ("07/08", "NOEUD 7"),
+        PageId::Aide => ("08/08", "AIDE"),
     }
 }
