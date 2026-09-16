@@ -12,6 +12,7 @@ const BLUE: Pixel = Pixel::rgb(80, 130, 255);
 const GREEN: Pixel = Pixel::rgb(80, 230, 120);
 const RED: Pixel = Pixel::rgb(245, 85, 75);
 const YELLOW: Pixel = Pixel::rgb(245, 215, 70);
+const PINK: Pixel = Pixel::rgb(245, 105, 185);
 
 pub fn choice_prompt_y(page: PageId) -> Option<i32> {
     (page != PageId::Accueil).then_some(184)
@@ -164,6 +165,7 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
             text(framebuffer, 142, "DERNIER MESSAGE : 17:42  12/05/1996", DIM);
             text(framebuffer, 158, "PERSONNE N'A QUITTE LE SALON.", YELLOW);
         }
+        DetailId::Rencontres => render_rencontres(framebuffer, &content.rencontres),
         DetailId::News => {
             section_rule(framebuffer, 48, "FIL DES BREVES", CYAN);
             render_editorial_full(framebuffer, 62, &content.news, CYAN);
@@ -260,6 +262,22 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
             text(framebuffer, 176, "RAISON : TEMOINS TROP COHERENTS", RED);
         }
     }
+}
+
+fn render_rencontres(framebuffer: &mut Framebuffer, file: &ContentFile) {
+    section_rule(framebuffer, 48, "SERVICE RENCONTRES GCHO", PINK);
+    text(framebuffer, 62, "TARIF : 5 FRANCS / MINUTE", YELLOW);
+    text(framebuffer, 74, "LA SOLITUDE RESTE GRATUITE.", DIM);
+
+    for (index, message) in file.messages.iter().take(4).enumerate() {
+        let y = 88 + index as i32 * 22;
+        text(framebuffer, y, &message.title, PINK);
+        if let Some(line) = message.body.first() {
+            text(framebuffer, y + 10, line, OFF_WHITE);
+        }
+    }
+
+    text(framebuffer, 181, "FACTURATION : DEJA EN COURS.", YELLOW);
 }
 
 fn render_page_content(framebuffer: &mut Framebuffer, page: PageId, content: &ContentBundle) {
@@ -409,6 +427,7 @@ fn detail_title(detail: DetailId) -> &'static str {
         DetailId::PixelMaze => "ARCADE / PIXEL MAZE",
         DetailId::Mailbox => "MESSAGERIE / MA BOITE",
         DetailId::ChatRooms => "MESSAGERIE / SALONS",
+        DetailId::Rencontres => "MESSAGERIE / RENCONTRES",
         DetailId::News => "INFOS / BREVES",
         DetailId::ServicePublic => "INFOS / SERVICE PUBLIC",
         DetailId::Alerts => "INFOS / ALERTES",
