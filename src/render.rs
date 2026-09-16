@@ -179,9 +179,24 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
         }
         DetailId::Alerts => {
             section_rule(framebuffer, 48, "CENTRE NATIONAL D'ALERTE", CYAN);
-            text(framebuffer, 66, "NIVEAU : ADMINISTRATIVEMENT VIGILANT", YELLOW);
-            text(framebuffer, 86, "SECTEUR : ENSEMBLE DU TERRITOIRE", OFF_WHITE);
-            text(framebuffer, 102, "MOTIF : SITUATION A SURVEILLER", OFF_WHITE);
+            text(
+                framebuffer,
+                66,
+                "NIVEAU : ADMINISTRATIVEMENT VIGILANT",
+                YELLOW,
+            );
+            text(
+                framebuffer,
+                86,
+                "SECTEUR : ENSEMBLE DU TERRITOIRE",
+                OFF_WHITE,
+            );
+            text(
+                framebuffer,
+                102,
+                "MOTIF : SITUATION A SURVEILLER",
+                OFF_WHITE,
+            );
             text(framebuffer, 126, "CONSIGNE 1 : RESTEZ INFORME", CYAN);
             text(framebuffer, 142, "CONSIGNE 2 : NE PANIQUEZ PAS", CYAN);
             text(framebuffer, 158, "CONSIGNE 3 : PANIQUE NON HOMOLOGUEE", DIM);
@@ -222,9 +237,19 @@ fn render_detail(framebuffer: &mut Framebuffer, detail: DetailId, content: &Cont
         DetailId::Node7Witnesses => {
             section_rule(framebuffer, 48, "DEPOSITIONS ARCHIVEES", RED);
             text(framebuffer, 64, "TEMOIN 01 : N'A RIEN VU", OFF_WHITE);
-            text(framebuffer, 80, "TEMOIN 02 : CONFIRME N'AVOIR RIEN VU", OFF_WHITE);
+            text(
+                framebuffer,
+                80,
+                "TEMOIN 02 : CONFIRME N'AVOIR RIEN VU",
+                OFF_WHITE,
+            );
             text(framebuffer, 96, "TEMOIN 03 : N'EXISTE PAS", OFF_WHITE);
-            text(framebuffer, 120, "CONCORDANCE DES TEMOIGNAGES : 100%", YELLOW);
+            text(
+                framebuffer,
+                120,
+                "CONCORDANCE DES TEMOIGNAGES : 100%",
+                YELLOW,
+            );
             text(framebuffer, 144, "INCIDENT OBSERVE : AUCUN", DIM);
             text(framebuffer, 160, "DOSSIER CLASSE : NON", RED);
             text(framebuffer, 176, "RAISON : TEMOINS TROP COHERENTS", RED);
