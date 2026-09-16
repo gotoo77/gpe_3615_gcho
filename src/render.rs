@@ -13,6 +13,10 @@ const GREEN: Pixel = Pixel::rgb(80, 230, 120);
 const RED: Pixel = Pixel::rgb(245, 85, 75);
 const YELLOW: Pixel = Pixel::rgb(245, 215, 70);
 
+pub fn choice_prompt_y(page: PageId) -> Option<i32> {
+    (page != PageId::Accueil).then_some(184)
+}
+
 pub fn render_boot(framebuffer: &mut Framebuffer, progress: f32) {
     terminal_background(framebuffer);
     frame(framebuffer);
@@ -94,13 +98,15 @@ pub fn render_terminal(
     render_page_content(framebuffer, page, content);
     render_notice(framebuffer, service.notice());
 
-    if service.notice().is_none() {
-        framebuffer.draw_text(11, 198, "VOTRE CHOIX ?", OFF_WHITE);
+    if service.notice().is_none()
+        && let Some(prompt_y) = choice_prompt_y(page)
+    {
+        framebuffer.draw_text(11, prompt_y, "VOTRE CHOIX ?", OFF_WHITE);
         if let Some(digit) = service.pending_digit() {
-            framebuffer.draw_text(96, 198, &digit.to_string(), CYAN);
+            framebuffer.draw_text(96, prompt_y, &digit.to_string(), CYAN);
         }
         if cursor_visible {
-            framebuffer.fill_rect(104, 197, 5, 8, CYAN);
+            framebuffer.fill_rect(104, prompt_y - 1, 5, 8, CYAN);
         }
     }
     render_function_keys(framebuffer, active_function_key);

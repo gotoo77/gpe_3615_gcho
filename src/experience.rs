@@ -14,6 +14,7 @@ const BANNER_PERIOD_SECONDS: f32 = 8.0;
 const STATUS_PERIOD_SECONDS: f32 = 12.0;
 pub const DATA_CHUNK_CHARACTERS: usize = 16;
 pub const TERMINAL_VISIBLE_CHARACTERS: usize = MINITEL_COLUMNS * MINITEL_ROWS;
+pub const LIVE_STATUS_TOP_Y: i32 = 200;
 const LIVE_STATUSES: &[&str] = &[
     "RESEAU GCHO : OUVERT",
     "1 NOUVEAU MESSAGE",
@@ -174,14 +175,19 @@ pub(crate) fn render_live_status(
     status: &str,
     selection: Option<u8>,
 ) {
-    framebuffer.fill_rect(9, 200, 302, 10, Pixel::rgb(5, 16, 20));
-    framebuffer.draw_line(9, 200, 310, 200, TERMINAL_DIM);
+    framebuffer.fill_rect(9, LIVE_STATUS_TOP_Y, 302, 10, Pixel::rgb(5, 16, 20));
+    framebuffer.draw_line(9, LIVE_STATUS_TOP_Y, 310, LIVE_STATUS_TOP_Y, TERMINAL_DIM);
     let label = if selection.is_some() {
         selection_hint(selection)
     } else {
         status.to_owned()
     };
-    framebuffer.draw_text(14, 202, &fit_line(&label, 46), TERMINAL_CYAN);
+    framebuffer.draw_text(
+        14,
+        LIVE_STATUS_TOP_Y + 2,
+        &fit_line(&label, 46),
+        TERMINAL_CYAN,
+    );
 }
 
 pub(crate) fn render_transmission_mask(framebuffer: &mut Framebuffer, visible_characters: usize) {

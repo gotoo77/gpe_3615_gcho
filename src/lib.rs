@@ -13,12 +13,13 @@ pub use app::{
 pub use branding::{ACCUEIL_LOGO_RECT, decode_minitel_logo};
 pub use content::{ContentBundle, ContentFile, EditorialMessage};
 pub use experience::{
-    DATA_CHUNK_CHARACTERS, LiveServicePulse, TerminalTiming, data_chunks_crossed,
-    public_service_slogan, selection_hint,
+    DATA_CHUNK_CHARACTERS, LIVE_STATUS_TOP_Y, LiveServicePulse, TerminalTiming,
+    data_chunks_crossed, public_service_slogan, selection_hint,
 };
 pub use facade::{
     FunctionKey, FunctionKeySpec, function_key_at, function_keys, snapshot_date_label,
 };
+pub use render::choice_prompt_y;
 pub use service::{DetailId, Entry, NavCommand, PageId, Service};
 pub use sound::{RetroCue, play_retro_cue, register_retro_audio};
 

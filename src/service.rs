@@ -41,6 +41,7 @@ enum Target {
     Detail(DetailId),
     Notice(&'static str),
     Summary,
+    Reconnect,
     Quit,
 }
 
@@ -229,11 +230,18 @@ const NOEUD7: &[Entry] = &[
     },
 ];
 
-const AIDE: &[Entry] = &[Entry {
-    key: 1,
-    label: "TEST DU TERMINAL",
-    target: Target::Notice("CLAVIER RECU. TERMINAL CONSIDERE COMME DOCILE."),
-}];
+const AIDE: &[Entry] = &[
+    Entry {
+        key: 1,
+        label: "TEST DU TERMINAL",
+        target: Target::Notice("CLAVIER RECU. TERMINAL CONSIDERE COMME DOCILE."),
+    },
+    Entry {
+        key: 2,
+        label: "REVOIR CONNEXION",
+        target: Target::Reconnect,
+    },
+];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Service {
@@ -243,6 +251,7 @@ pub struct Service {
     history: Vec<PageId>,
     notice: Option<&'static str>,
     exit_requested: bool,
+    reconnect_requested: bool,
 }
 
 impl Default for Service {
@@ -260,6 +269,7 @@ impl Service {
             history: Vec::new(),
             notice: None,
             exit_requested: false,
+            reconnect_requested: false,
         }
     }
 
@@ -305,6 +315,10 @@ impl Service {
 
     pub fn take_exit_requested(&mut self) -> bool {
         std::mem::take(&mut self.exit_requested)
+    }
+
+    pub fn take_reconnect_requested(&mut self) -> bool {
+        std::mem::take(&mut self.reconnect_requested)
     }
 
     pub fn apply(&mut self, command: NavCommand) {
@@ -407,6 +421,10 @@ impl Service {
             Target::Detail(detail) => self.detail = Some(detail),
             Target::Notice(message) => self.notice = Some(message),
             Target::Summary => self.go_summary(),
+            Target::Reconnect => {
+                self.go_summary();
+                self.reconnect_requested = true;
+            }
             Target::Quit => self.exit_requested = true,
         }
     }

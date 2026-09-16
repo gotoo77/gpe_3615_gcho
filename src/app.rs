@@ -112,6 +112,18 @@ impl GchoApp {
             self.function_key_flash = FUNCTION_KEY_FLASH_SECONDS;
         }
     }
+
+    fn restart_connection(&mut self, frame: &mut Frame<'_>) {
+        self.service = Service::new();
+        self.live_pulse = LiveServicePulse::new();
+        self.startup_elapsed = 0.0;
+        self.transmission_elapsed = 0.0;
+        self.last_visible_characters = 0;
+        self.active_function_key = None;
+        self.function_key_flash = 0.0;
+        let _ = play_retro_cue(frame.audio, RetroCue::Boot);
+        render_boot(frame.framebuffer, 0.0);
+    }
 }
 
 impl Game for GchoApp {
@@ -212,6 +224,11 @@ impl Game for GchoApp {
 
         for (command, function_key) in commands {
             self.apply_command(frame.audio, command, function_key);
+        }
+
+        if self.service.take_reconnect_requested() {
+            self.restart_connection(frame);
+            return GameResult::Continue;
         }
 
         if self.service.take_exit_requested() {
