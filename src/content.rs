@@ -136,6 +136,9 @@ fn fallback_rencontres() -> ContentFile {
         "fallback-rencontres",
         "rencontres",
         "SERVICE RENCONTRES",
-        &["AUCUN PROFIL DISPONIBLE.", "LA FACTURATION, ELLE, FONCTIONNE."],
+        &[
+            "AUCUN PROFIL DISPONIBLE.",
+            "LA FACTURATION, ELLE, FONCTIONNE.",
+        ],
     ))
 }
