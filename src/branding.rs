@@ -36,6 +36,10 @@ pub fn decode_minitel_logo() -> Result<Image, ImageError> {
     ))
 }
 
+pub fn decode_macronus_portrait() -> Result<Image, ImageError> {
+    Image::decode_png(include_bytes!("../assets/portraits/macronus_ier.png"))
+}
+
 pub(crate) fn render_branding_splash(framebuffer: &mut Framebuffer, logo: &Image) {
     framebuffer.clear(BG);
     for y in (0..framebuffer.height() as i32).step_by(4) {
@@ -65,6 +69,7 @@ pub(crate) fn render_accueil_branding(
     framebuffer: &mut Framebuffer,
     service: &Service,
     logo: &Image,
+    macronus_portrait: &Image,
 ) {
     framebuffer.fill_rect(9, 22, 302, 176, BG);
     for y in (22..198).step_by(4) {
@@ -82,7 +87,7 @@ pub(crate) fn render_accueil_branding(
     );
     draw_center(framebuffer, 78, "SERVICE TELEMATIQUE CLIMATIQUE", OFF_WHITE);
 
-    render_royal_bust(framebuffer);
+    render_royal_portrait(framebuffer, macronus_portrait);
 
     for (index, entry) in service.entries().iter().enumerate() {
         let y = ACCUEIL_MENU_START_Y + index as i32 * ACCUEIL_MENU_STEP;
@@ -111,7 +116,7 @@ pub(crate) fn render_accueil_branding(
     }
 }
 
-fn render_royal_bust(framebuffer: &mut Framebuffer) {
+fn render_royal_portrait(framebuffer: &mut Framebuffer, portrait: &Image) {
     const LEFT: i32 = 14;
     const TOP: i32 = 94;
 
@@ -119,28 +124,17 @@ fn render_royal_bust(framebuffer: &mut Framebuffer) {
     framebuffer.fill_rect(LEFT + 3, TOP + 3, 23, 4, BLUE);
     framebuffer.fill_rect(LEFT + 26, TOP + 3, 23, 4, OFF_WHITE);
     framebuffer.fill_rect(LEFT + 49, TOP + 3, 24, 4, RED);
-
-    framebuffer.draw_line(LEFT + 25, TOP + 21, LEFT + 51, TOP + 21, OFF_WHITE);
-    framebuffer.draw_line(LEFT + 29, TOP + 15, LEFT + 34, TOP + 21, OFF_WHITE);
-    framebuffer.draw_line(LEFT + 38, TOP + 12, LEFT + 38, TOP + 21, OFF_WHITE);
-    framebuffer.draw_line(LEFT + 47, TOP + 15, LEFT + 42, TOP + 21, OFF_WHITE);
-    framebuffer.fill_rect(LEFT + 29, TOP + 24, 22, 5, OFF_WHITE);
-
-    framebuffer.fill_rect(LEFT + 27, TOP + 31, 26, 34, OFF_WHITE);
-    framebuffer.fill_rect(LEFT + 23, TOP + 38, 34, 20, OFF_WHITE);
-    framebuffer.fill_rect(LEFT + 31, TOP + 30, 18, 5, BG);
-    framebuffer.fill_rect(LEFT + 30, TOP + 43, 5, 3, BG);
-    framebuffer.fill_rect(LEFT + 45, TOP + 43, 5, 3, BG);
-    framebuffer.draw_line(LEFT + 40, TOP + 47, LEFT + 39, TOP + 54, BG);
-    framebuffer.draw_line(LEFT + 34, TOP + 58, LEFT + 46, TOP + 58, BG);
-
-    framebuffer.fill_rect(LEFT + 34, TOP + 65, 12, 6, OFF_WHITE);
-    framebuffer.draw_line(LEFT + 25, TOP + 72, LEFT + 13, TOP + 86, OFF_WHITE);
-    framebuffer.draw_line(LEFT + 55, TOP + 72, LEFT + 67, TOP + 86, OFF_WHITE);
-    framebuffer.draw_line(LEFT + 13, TOP + 86, LEFT + 67, TOP + 86, OFF_WHITE);
-    framebuffer.draw_line(LEFT + 40, TOP + 71, LEFT + 40, TOP + 85, DIM);
-
-    framebuffer.draw_text(LEFT + 8, TOP + 88, "MACRONUS IER", CYAN);
+    framebuffer.draw_image_fit(
+        portrait,
+        Rect {
+            x: LEFT + 3,
+            y: TOP + 9,
+            width: 70,
+            height: 82,
+        },
+        ImageFit::Contain,
+        ImageFilter::Nearest,
+    );
 }
 
 fn render_home_notice(framebuffer: &mut Framebuffer, notice: &str) {
