@@ -1,4 +1,4 @@
-use gpe_3615_gcho::{ACCUEIL_LOGO_RECT, decode_minitel_logo};
+use gpe_3615_gcho::{ACCUEIL_LOGO_RECT, decode_macronus_portrait, decode_minitel_logo};
 
 #[test]
 fn bundled_minitel_logo_decodes_with_expected_source_dimensions() {
@@ -6,6 +6,14 @@ fn bundled_minitel_logo_decodes_with_expected_source_dimensions() {
 
     assert_eq!(logo.width(), 2172);
     assert_eq!(logo.height(), 724);
+}
+
+#[test]
+fn bundled_macronus_portrait_decodes_with_expected_source_dimensions() {
+    let portrait = decode_macronus_portrait().expect("bundled Macronus portrait should decode");
+
+    assert_eq!(portrait.width(), 724);
+    assert_eq!(portrait.height(), 676);
 }
 
 #[test]
