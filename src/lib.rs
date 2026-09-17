@@ -11,7 +11,7 @@ mod touch;
 pub use app::{
     BOOT_DURATION_SECONDS, BRANDING_SPLASH_DURATION_SECONDS, GchoApp, StartupStage, startup_stage,
 };
-pub use branding::{ACCUEIL_LOGO_RECT, decode_minitel_logo};
+pub use branding::{ACCUEIL_LOGO_RECT, decode_macronus_portrait, decode_minitel_logo};
 pub use content::{ContentBundle, ContentFile, EditorialMessage};
 pub use experience::{
     DATA_CHUNK_CHARACTERS, LIVE_STATUS_HEIGHT, LIVE_STATUS_TOP_Y, LiveServicePulse, TerminalTiming,
