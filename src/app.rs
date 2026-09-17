@@ -2,7 +2,9 @@ use gotoo_pixel_engine::{
     Audio, Frame, Game, GameResult, Image, Key, MouseButton, TextInputEvent, TouchPhase,
 };
 
-use crate::branding::{decode_minitel_logo, render_accueil_branding, render_branding_splash};
+use crate::branding::{
+    decode_macronus_portrait, decode_minitel_logo, render_accueil_branding, render_branding_splash,
+};
 use crate::content::ContentBundle;
 use crate::experience::{
     DATA_CHUNK_CHARACTERS, LiveServicePulse, TERMINAL_VISIBLE_CHARACTERS, TerminalTiming,
@@ -40,6 +42,7 @@ pub struct GchoApp {
     service: Service,
     content: ContentBundle,
     minitel_logo: Image,
+    macronus_portrait: Image,
     timing: TerminalTiming,
     live_pulse: LiveServicePulse,
     startup_elapsed: f32,
@@ -69,6 +72,8 @@ impl GchoApp {
             content: ContentBundle::load_bundled(),
             minitel_logo: decode_minitel_logo()
                 .expect("bundled 3615 GCHO Minitel logo must decode"),
+            macronus_portrait: decode_macronus_portrait()
+                .expect("bundled Macronus portrait must decode"),
             timing,
             live_pulse: LiveServicePulse::new(),
             startup_elapsed: 0.0,
@@ -279,7 +284,12 @@ impl Game for GchoApp {
         );
         if self.service.current_page() == PageId::Accueil && self.service.current_detail().is_none()
         {
-            render_accueil_branding(frame.framebuffer, &self.service, &self.minitel_logo);
+            render_accueil_branding(
+                frame.framebuffer,
+                &self.service,
+                &self.minitel_logo,
+                &self.macronus_portrait,
+            );
         }
         if self.service.current_page() == PageId::Services
             && self.service.current_detail().is_none()
