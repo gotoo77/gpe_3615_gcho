@@ -8,6 +8,10 @@ fn open_page(service: &mut Service, digit: u8) {
 #[test]
 fn rencontres_is_a_real_messagerie_detail() {
     let mut service = Service::new();
+
+    open_page(&mut service, 6);
+    assert_eq!(service.current_page(), PageId::Services);
+
     open_page(&mut service, 2);
     assert_eq!(service.current_page(), PageId::Messagerie);
 

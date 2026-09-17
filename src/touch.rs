@@ -1,17 +1,32 @@
+use crate::branding::{
+    ACCUEIL_MENU_LEFT_X, ACCUEIL_MENU_RIGHT_X, ACCUEIL_MENU_ROW_HEIGHT, ACCUEIL_MENU_START_Y,
+    ACCUEIL_MENU_STEP,
+};
 use crate::service::{NavCommand, PageId, Service};
 
 const MENU_LEFT_X: i32 = 9;
 const MENU_RIGHT_X: i32 = 311;
 
 pub fn menu_entry_at(service: &Service, x: i32, y: i32) -> Option<u8> {
-    if service.current_detail().is_some() || !(MENU_LEFT_X..MENU_RIGHT_X).contains(&x) {
+    if service.current_detail().is_some() {
         return None;
     }
 
-    let (start_y, step, top_padding, height) = match service.current_page() {
-        PageId::Accueil => (91, 10, 2, 10),
-        _ => (52, 15, 3, 12),
+    let (left, right, start_y, step, top_padding, height) = match service.current_page() {
+        PageId::Accueil => (
+            ACCUEIL_MENU_LEFT_X,
+            ACCUEIL_MENU_RIGHT_X,
+            ACCUEIL_MENU_START_Y,
+            ACCUEIL_MENU_STEP,
+            2,
+            ACCUEIL_MENU_ROW_HEIGHT,
+        ),
+        _ => (MENU_LEFT_X, MENU_RIGHT_X, 52, 15, 3, 12),
     };
+
+    if !(left..right).contains(&x) {
+        return None;
+    }
 
     service
         .entries()

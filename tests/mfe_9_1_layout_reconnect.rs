@@ -25,6 +25,10 @@ fn choice_prompt_never_collides_with_live_status_and_is_hidden_on_accueil() {
 #[test]
 fn aide_can_request_a_full_connection_replay() {
     let mut service = Service::new();
+
+    open_page(&mut service, 6);
+    assert_eq!(service.current_page(), PageId::Services);
+
     open_page(&mut service, 6);
     assert_eq!(service.current_page(), PageId::Aide);
 

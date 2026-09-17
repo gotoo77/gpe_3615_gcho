@@ -1,6 +1,7 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PageId {
     Accueil,
+    Services,
     Arcade,
     Messagerie,
     Infos,
@@ -11,6 +12,8 @@ pub enum PageId {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DetailId {
+    RoyalCommunique,
+    RoyalHeatAlert,
     ArcadeScores,
     PixelMaze,
     Mailbox,
@@ -54,6 +57,39 @@ pub struct Entry {
 }
 
 const ACCUEIL: &[Entry] = &[
+    Entry {
+        key: 1,
+        label: "COMMUNIQUE ROYAL",
+        target: Target::Detail(DetailId::RoyalCommunique),
+    },
+    Entry {
+        key: 2,
+        label: "ALERTE CANICULE",
+        target: Target::Detail(DetailId::RoyalHeatAlert),
+    },
+    Entry {
+        key: 3,
+        label: "MESSAGES DU JOUR",
+        target: Target::Detail(DetailId::News),
+    },
+    Entry {
+        key: 4,
+        label: "PORTRAITS PIXELISES",
+        target: Target::Notice("CABINE DE PORTRAITS ROYAUX EN MAINTENANCE."),
+    },
+    Entry {
+        key: 5,
+        label: "METEO DU ROYAUME",
+        target: Target::Notice("PREVISION ROYALE : CHAUD, PUIS ENCORE CHAUD."),
+    },
+    Entry {
+        key: 6,
+        label: "SUITE        AUTRES SERVICES",
+        target: Target::Page(PageId::Services),
+    },
+];
+
+const SERVICES: &[Entry] = &[
     Entry {
         key: 1,
         label: "ARCADE       JEUX ET DEMOS",
@@ -293,6 +329,7 @@ impl Service {
     pub fn available_pages() -> &'static [PageId] {
         &[
             PageId::Accueil,
+            PageId::Services,
             PageId::Arcade,
             PageId::Messagerie,
             PageId::Infos,
@@ -305,6 +342,7 @@ impl Service {
     pub fn entries(&self) -> &'static [Entry] {
         match self.current {
             PageId::Accueil => ACCUEIL,
+            PageId::Services => SERVICES,
             PageId::Arcade => ARCADE,
             PageId::Messagerie => MESSAGERIE,
             PageId::Infos => INFOS,
