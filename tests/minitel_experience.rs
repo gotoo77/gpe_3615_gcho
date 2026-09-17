@@ -1,4 +1,6 @@
-use gpe_3615_gcho::{NavCommand, Service, TerminalTiming, public_service_slogan};
+use gpe_3615_gcho::{
+    DetailId, NavCommand, Service, TerminalTiming, public_service_slogan,
+};
 
 #[test]
 fn directional_navigation_selects_entries_and_wraps() {
@@ -14,7 +16,7 @@ fn directional_navigation_selects_entries_and_wraps() {
     assert_eq!(service.pending_digit(), Some(1));
 
     service.apply(NavCommand::Previous);
-    assert_eq!(service.pending_digit(), Some(0));
+    assert_eq!(service.pending_digit(), Some(6));
 }
 
 #[test]
@@ -23,7 +25,8 @@ fn directional_selection_can_be_sent_without_typing_a_digit() {
     service.apply(NavCommand::Next);
     service.apply(NavCommand::Send);
 
-    assert_eq!(service.current_page(), gpe_3615_gcho::PageId::Arcade);
+    assert_eq!(service.current_page(), gpe_3615_gcho::PageId::Accueil);
+    assert_eq!(service.current_detail(), Some(DetailId::RoyalCommunique));
 }
 
 #[test]
