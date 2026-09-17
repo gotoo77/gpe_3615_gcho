@@ -1,6 +1,4 @@
-use gpe_3615_gcho::{
-    DetailId, NavCommand, Service, TerminalTiming, public_service_slogan,
-};
+use gpe_3615_gcho::{DetailId, NavCommand, Service, TerminalTiming, public_service_slogan};
 
 #[test]
 fn directional_navigation_selects_entries_and_wraps() {
